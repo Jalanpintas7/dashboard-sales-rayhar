@@ -1,48 +1,60 @@
 <script>
+  import { createUmrahCategory } from '../supabase-helpers.js';
+
   let categoryData = {
     namaKategori: '',
-    deskripsi: '',
-    levelLayanan: 'standard',
-    fasilitas: [],
     status: 'aktif'
   };
 
-  const fasilitasOptions = [
-    'Hotel 5 Bintang',
-    'Hotel 4 Bintang', 
-    'Hotel 3 Bintang',
-    'Makan 3x Sehari',
-    'Makan 2x Sehari',
-    'Transport AC',
-    'Transport Non-AC',
-    'Guide Bahasa Indonesia',
-    'Guide Bahasa Arab',
-    'Visa Processing',
-    'Asuransi Perjalanan',
-    'Buku Panduan',
-    'Tas Umrah',
-    'Pakaian Ihram'
-  ];
+  let isLoading = false;
+  let message = '';
+  let messageType = '';
 
-  function toggleFasilitas(fasilitas) {
-    if (categoryData.fasilitas.includes(fasilitas)) {
-      categoryData.fasilitas = categoryData.fasilitas.filter(f => f !== fasilitas);
-    } else {
-      categoryData.fasilitas = [...categoryData.fasilitas, fasilitas];
+  async function handleSubmit() {
+    if (!categoryData.namaKategori.trim()) {
+      showMessage('Nama kategori harus diisi', 'error');
+      return;
+    }
+
+    isLoading = true;
+    message = '';
+    
+    try {
+      // Persiapkan data untuk database
+      const categoryDataForDB = {
+        name: categoryData.namaKategori.trim(),
+        is_active: categoryData.status === 'aktif'
+      };
+
+      // Simpan ke database menggunakan Supabase
+      const result = await createUmrahCategory(categoryDataForDB);
+      
+      console.log('Kategori umrah berhasil ditambahkan:', result);
+      showMessage('Kategori umrah berhasil ditambahkan!', 'success');
+      
+      // Reset form setelah submit berhasil
+      categoryData = {
+        namaKategori: '',
+        status: 'aktif'
+      };
+      
+    } catch (error) {
+      console.error('Error saat menambahkan kategori umrah:', error);
+      showMessage('Gagal menambahkan kategori umrah. Silakan coba lagi.', 'error');
+    } finally {
+      isLoading = false;
     }
   }
 
-  function handleSubmit() {
-    console.log('Data kategori umrah:', categoryData);
+  function showMessage(text, type) {
+    message = text;
+    messageType = type;
     
-    // Reset form setelah submit
-    categoryData = {
-      namaKategori: '',
-      deskripsi: '',
-      levelLayanan: 'standard',
-      fasilitas: [],
-      status: 'aktif'
-    };
+    // Auto hide message setelah 5 detik
+    setTimeout(() => {
+      message = '';
+      messageType = '';
+    }, 5000);
   }
 </script>
 
@@ -56,6 +68,13 @@
     <h2 class="text-xl font-bold text-slate-800">Tambah Kategori Umrah Baru</h2>
   </div>
 
+  <!-- Message Display -->
+  {#if message}
+    <div class="mb-4 p-3 rounded-lg {messageType === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}">
+      {message}
+    </div>
+  {/if}
+
   <form on:submit|preventDefault={handleSubmit} class="space-y-6">
     <div>
       <label for="namaKategori" class="block text-sm font-medium text-slate-700 mb-2">
@@ -68,56 +87,8 @@
         required
         placeholder="Contoh: Premium, Standard, Ekonomi, VIP"
         class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+        disabled={isLoading}
       />
-    </div>
-
-    <div>
-      <label for="deskripsi" class="block text-sm font-medium text-slate-700 mb-2">
-        Deskripsi Kategori
-      </label>
-      <textarea
-        id="deskripsi"
-        bind:value={categoryData.deskripsi}
-        rows="3"
-        placeholder="Deskripsi tentang kategori umrah ini..."
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 resize-none"
-      ></textarea>
-    </div>
-
-    <div>
-      <label for="levelLayanan" class="block text-sm font-medium text-slate-700 mb-2">
-        Level Layanan
-      </label>
-      <select
-        id="levelLayanan"
-        bind:value={categoryData.levelLayanan}
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-      >
-        <option value="standard">Standard</option>
-        <option value="premium">Premium</option>
-        <option value="vip">VIP</option>
-        <option value="ekonomi">Ekonomi</option>
-        <option value="luxury">Luxury</option>
-      </select>
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium text-slate-700 mb-3">
-        Fasilitas yang Tersedia
-      </label>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-3 border border-slate-200 rounded-xl">
-        {#each fasilitasOptions as fasilitas}
-          <label class="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={categoryData.fasilitas.includes(fasilitas)}
-              on:change={() => toggleFasilitas(fasilitas)}
-              class="w-4 h-4 text-yellow-600 bg-slate-100 border-slate-300 rounded focus:ring-yellow-500 focus:ring-2"
-            />
-            <span class="text-sm text-slate-700">{fasilitas}</span>
-          </label>
-        {/each}
-      </div>
     </div>
 
     <div>
@@ -128,6 +99,7 @@
         id="status"
         bind:value={categoryData.status}
         class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+        disabled={isLoading}
       >
         <option value="aktif">Aktif</option>
         <option value="nonaktif">Non-Aktif</option>
@@ -136,9 +108,20 @@
 
     <button
       type="submit"
-      class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg"
+      disabled={isLoading}
+      class="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
     >
-      Tambah Kategori Umrah
+      {#if isLoading}
+        <div class="flex items-center justify-center gap-2">
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Menyimpan...
+        </div>
+      {:else}
+        Tambah Kategori Umrah
+      {/if}
     </button>
   </form>
 </div>

@@ -1,9 +1,8 @@
 <script>
-  import { createUmrahSeason } from '../supabase-helpers.js';
-  import { onMount } from 'svelte';
+  import { createAirline } from '../supabase-helpers.js';
 
-  let seasonData = {
-    namaMusim: '',
+  let airlineData = {
+    namaAirline: '',
     status: 'aktif'
   };
 
@@ -12,8 +11,8 @@
   let messageType = '';
 
   async function handleSubmit() {
-    if (!seasonData.namaMusim.trim()) {
-      showMessage('Nama musim harus diisi', 'error');
+    if (!airlineData.namaAirline.trim()) {
+      showMessage('Nama airline harus diisi', 'error');
       return;
     }
 
@@ -22,26 +21,26 @@
     
     try {
       // Persiapkan data untuk database
-      const seasonDataForDB = {
-        name: seasonData.namaMusim.trim(),
-        is_active: seasonData.status === 'aktif'
+      const airlineDataForDB = {
+        name: airlineData.namaAirline.trim(),
+        is_active: airlineData.status === 'aktif'
       };
 
       // Simpan ke database menggunakan Supabase
-      const result = await createUmrahSeason(seasonDataForDB);
+      const result = await createAirline(airlineDataForDB);
       
-      console.log('Musim umrah berhasil ditambahkan:', result);
-      showMessage('Musim umrah berhasil ditambahkan!', 'success');
+      console.log('Airline berhasil ditambahkan:', result);
+      showMessage('Airline berhasil ditambahkan!', 'success');
       
       // Reset form setelah submit berhasil
-      seasonData = {
-        namaMusim: '',
+      airlineData = {
+        namaAirline: '',
         status: 'aktif'
       };
       
     } catch (error) {
-      console.error('Error saat menambahkan musim umrah:', error);
-      showMessage('Gagal menambahkan musim umrah. Silakan coba lagi.', 'error');
+      console.error('Error saat menambahkan airline:', error);
+      showMessage('Gagal menambahkan airline. Silakan coba lagi.', 'error');
     } finally {
       isLoading = false;
     }
@@ -61,15 +60,12 @@
 
 <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
   <div class="flex items-center gap-3 mb-6">
-    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-purple-600">
-        <path d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
-        <path d="M16 2v4"/>
-        <path d="M8 2v4"/>
-        <path d="M3 10h18"/>
+    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-blue-600">
+        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-1.5 0-2 1-2 1l-3.5 3.5L7.2 6.2C6.4 6 6 6.6 6.8 7.4L11 12l-7.8 1.8c-.8.2-.4.8.4.6L12 13l3.5 3.5c.8.8 1.4.4 1.2-.4L17.8 19.2Z"/>
       </svg>
     </div>
-    <h2 class="text-xl font-bold text-slate-800">Tambah Musim Umrah Baru</h2>
+    <h2 class="text-xl font-bold text-slate-800">Input Airline Baru</h2>
   </div>
 
   <!-- Message Display -->
@@ -81,16 +77,16 @@
 
   <form on:submit|preventDefault={handleSubmit} class="space-y-6">
     <div>
-      <label for="namaMusim" class="block text-sm font-medium text-slate-700 mb-2">
-        Nama Musim *
+      <label for="namaAirline" class="block text-sm font-medium text-slate-700 mb-2">
+        Nama Airline *
       </label>
       <input
-        id="namaMusim"
+        id="namaAirline"
         type="text"
-        bind:value={seasonData.namaMusim}
+        bind:value={airlineData.namaAirline}
         required
-        placeholder="Contoh: Ramadhan, Syawal, Dzulhijjah"
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+        placeholder="Contoh: Saudi Airlines, Emirates, Qatar Airways"
+        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
         disabled={isLoading}
       />
     </div>
@@ -101,8 +97,8 @@
       </label>
       <select
         id="status"
-        bind:value={seasonData.status}
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+        bind:value={airlineData.status}
+        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
         disabled={isLoading}
       >
         <option value="aktif">Aktif</option>
@@ -113,7 +109,7 @@
     <button
       type="submit"
       disabled={isLoading}
-      class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
+      class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
     >
       {#if isLoading}
         <div class="flex items-center justify-center gap-2">
@@ -124,7 +120,7 @@
           Menyimpan...
         </div>
       {:else}
-        Tambah Musim Umrah
+        Tambah Airline
       {/if}
     </button>
   </form>

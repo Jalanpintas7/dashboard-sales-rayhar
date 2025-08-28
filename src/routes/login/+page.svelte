@@ -1,20 +1,57 @@
 <script>
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { signIn, user, loading } from '$lib/stores/auth.js';
   import EmailInput from '$lib/components/EmailInput.svelte';
   import PasswordInput from '$lib/components/PasswordInput.svelte';
-  
+  import { Lock, Loader2, LogIn } from 'lucide-svelte';
+
   let email = '';
   let password = '';
   let rememberMe = false;
   let isLoading = false;
-  
-  function handleSubmit() {
-    isLoading = true;
-    // Logic akan diimplementasikan nanti
-    setTimeout(() => {
-      isLoading = false;
-    }, 2000);
+  let loginError = '';
+
+  // Redirect jika sudah login
+  $: if ($user && !$loading) {
+    goto('/');
   }
+
+  function handleInputChange() {
+    // Clear error when user starts typing
+    if (loginError) {
+      loginError = '';
+    }
+  }
+
+  async function handleSubmit() {
+    if (!email || !password) {
+      loginError = 'Email dan password harus diisi';
+      return;
+    }
+
+    try {
+      isLoading = true;
+      loginError = '';
+      
+      await signIn(email, password);
+      
+      // Redirect akan ditangani oleh reactive statement di atas
+    } catch (error) {
+      console.error('Login error:', error);
+      loginError = error.message || 'Gagal masuk. Silakan coba lagi.';
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  onMount(() => {
+    // Focus pada email input saat halaman dimuat
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+      emailInput.focus();
+    }
+  });
 </script>
 
 <svelte:head>
@@ -26,9 +63,7 @@
     <!-- Logo dan Header -->
     <div class="text-center">
       <div class="mx-auto h-20 w-20 bg-gradient-to-r from-purple-600 to-violet-600 rounded-full flex items-center justify-center mb-4">
-        <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-        </svg>
+        <Lock class="h-12 w-12 text-white" />
       </div>
       <h2 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang</h2>
       <p class="text-gray-600">Masuk ke dashboard admin Rayhar</p>
@@ -36,6 +71,13 @@
 
     <!-- Form Login -->
     <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+      <!-- Error Message -->
+      {#if loginError}
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p class="text-red-600 text-sm">{loginError}</p>
+        </div>
+      {/if}
+      
       <form class="space-y-6" on:submit|preventDefault={handleSubmit}>
         <!-- Email Input -->
         <EmailInput
@@ -44,6 +86,7 @@
           label="Email"
           placeholder="Masukkan email Anda"
           required={true}
+          on:input={handleInputChange}
         />
 
         <!-- Password Input -->
@@ -53,6 +96,7 @@
           label="Password"
           placeholder="Masukkan password Anda"
           required={true}
+          on:input={handleInputChange}
         />
 
         <!-- Remember Me -->
@@ -72,20 +116,15 @@
         <div>
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || $loading}
             class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            {#if isLoading}
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+            {#if isLoading || $loading}
+              <Loader2 class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
               Memproses...
             {:else}
               <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                <svg class="h-5 w-5 text-purple-500 group-hover:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                </svg>
+                <LogIn class="h-5 w-5 text-purple-500 group-hover:text-purple-400" />
               </span>
               Masuk
             {/if}
@@ -93,7 +132,14 @@
         </div>
       </form>
 
-
+      <!-- Info Role -->
+      <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 class="text-sm font-medium text-blue-800 mb-2">Info Role:</h3>
+        <ul class="text-xs text-blue-700 space-y-1">
+          <li>• <strong>Super Admin:</strong> Akses penuh ke semua fitur dashboard utama</li>
+          <li>• <strong>Admin Branch:</strong> Akses terbatas ke dashboard branch</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
@@ -105,15 +151,15 @@
   }
   
   ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #f1f1f1;
   }
   
   ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #c1c1c1;
     border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #a8a8a8;
   }
 </style>

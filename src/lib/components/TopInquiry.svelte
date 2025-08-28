@@ -1,6 +1,49 @@
 <script>
+  import { onMount } from 'svelte';
+  import { getTopInquiriesByBranch, getTopInquiriesForSuperAdmin, getBranchIdByUser } from '../supabase-helpers.js';
+  import { user, userRole } from '../stores/auth.js';
+
   let isMenuOpen = false;
   let selectedFilter = 'keseluruhan';
+  let topInquiries = [];
+  let loading = true;
+  let error = null;
+  let branchId = null;
+  let isSuperAdmin = false;
+
+  // Load data berdasarkan filter yang dipilih
+  async function loadTopInquiries() {
+    try {
+      loading = true;
+      error = null;
+      
+      // Check if user is super admin
+      isSuperAdmin = $userRole === 'super_admin';
+      
+      if (isSuperAdmin) {
+        // Super admin: get data from all branches
+        topInquiries = await getTopInquiriesForSuperAdmin(selectedFilter, 5);
+      } else {
+        // Branch admin: get data from specific branch
+        // Get branch ID jika user adalah admin branch
+        if ($user) {
+          try {
+            branchId = await getBranchIdByUser($user.id);
+          } catch (err) {
+            console.log('User bukan admin branch atau error:', err);
+            branchId = null;
+          }
+        }
+
+        topInquiries = await getTopInquiriesByBranch(branchId, selectedFilter, 5);
+      }
+    } catch (err) {
+      console.error('Error loading top inquiries:', err);
+      error = err.message;
+    } finally {
+      loading = false;
+    }
+  }
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
@@ -9,6 +52,7 @@
   function selectFilter(filter) {
     selectedFilter = filter;
     isMenuOpen = false;
+    loadTopInquiries(); // Reload data ketika filter berubah
   }
 
   function closeMenu() {
@@ -22,14 +66,10 @@
     }
   }
 
-  // Data untuk top inquiry
-  const inquiryData = [
-    { name: 'Paket Umrah Premium', inquiries: 89, conversion: '23.4%' },
-    { name: 'Tour Bali 5D4N', inquiries: 67, conversion: '18.7%' },
-    { name: 'Paket Umrah Reguler', inquiries: 54, conversion: '15.2%' },
-    { name: 'Tour Lombok 4D3N', inquiries: 43, conversion: '12.8%' },
-    { name: 'Paket Umrah Ekonomi', inquiries: 38, conversion: '10.5%' }
-  ];
+  // Load data saat komponen mount
+  onMount(() => {
+    loadTopInquiries();
+  });
 </script>
 
 <svelte:window on:click={handleClickOutside} />
@@ -84,37 +124,67 @@
 
   <!-- Content -->
   <div class="space-y-2 lg:space-y-3 xl:space-y-4">
-    {#each inquiryData as item, index}
-      <div class="
-        bg-section
-        p-2 lg:p-3 xl:p-4 
-        transition-all duration-200
-        rounded-2xl
-      ">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
-            <div class="
-              w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
-              bg-indigo-100 
-              rounded-full 
-              flex items-center justify-center
-              text-indigo-700
-              font-semibold
-              text-xs lg:text-sm
-              flex-shrink-0
-            ">
-              {index + 1}
+    {#if loading}
+      <!-- Loading state -->
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <span class="ml-3 text-slate-600">Loading...</span>
+      </div>
+    {:else if error}
+      <!-- Error state -->
+      <div class="text-center py-8">
+        <p class="text-red-600 text-sm">Error: {error}</p>
+        <button 
+          class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700"
+          on:click={loadTopInquiries}
+        >
+          Coba Lagi
+        </button>
+      </div>
+    {:else if topInquiries.length === 0}
+      <!-- Empty state -->
+      <div class="text-center py-8">
+        <p class="text-slate-500 text-sm">Tidak ada data inquiry untuk ditampilkan</p>
+      </div>
+    {:else}
+      <!-- Inquiry list -->
+      {#each topInquiries as inquiry}
+        <div class="
+          bg-section
+          p-2 lg:p-3 xl:p-4 
+          transition-all duration-200
+          rounded-2xl
+        ">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
+              <div class="
+                w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
+                bg-indigo-100 
+                rounded-full 
+                flex items-center justify-center
+                text-indigo-700
+                font-semibold
+                text-xs lg:text-sm
+                flex-shrink-0
+              ">
+                {inquiry.rank}
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">{inquiry.name}</h3>
+              </div>
             </div>
-            <div class="min-w-0 flex-1">
-              <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">{item.name}</h3>
+            <div class="text-right flex-shrink-0">
+              {#if inquiry.conversion === '0.0%' || parseFloat(inquiry.conversion) > 100}
+                <p class="text-slate-900 font-bold text-sm lg:text-base">{inquiry.totalInquiries}</p>
+                <p class="text-slate-500 text-xs lg:text-sm">leads</p>
+              {:else}
+                <p class="text-slate-900 font-bold text-sm lg:text-base">{inquiry.conversion}</p>
+                <p class="text-slate-500 text-xs lg:text-sm">conversion</p>
+              {/if}
             </div>
-          </div>
-          <div class="text-right flex-shrink-0">
-            <p class="text-slate-900 font-bold text-sm lg:text-base">{item.conversion}</p>
-            <p class="text-slate-500 text-xs lg:text-sm">conversion</p>
           </div>
         </div>
-      </div>
-    {/each}
+      {/each}
+    {/if}
   </div>
 </div>

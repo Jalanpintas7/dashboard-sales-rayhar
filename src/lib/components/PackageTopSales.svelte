@@ -1,6 +1,49 @@
 <script>
+  import { onMount } from 'svelte';
+  import { getTopPackagesByBranch, getTopPackagesForSuperAdmin, getBranchIdByUser } from '../supabase-helpers.js';
+  import { user, userRole } from '../stores/auth.js';
+
   let isMenuOpen = false;
   let selectedFilter = 'keseluruhan';
+  let topPackages = [];
+  let loading = true;
+  let error = null;
+  let branchId = null;
+  let isSuperAdmin = false;
+
+  // Load data berdasarkan filter yang dipilih
+  async function loadTopPackages() {
+    try {
+      loading = true;
+      error = null;
+      
+      // Check if user is super admin
+      isSuperAdmin = $userRole === 'super_admin';
+      
+      if (isSuperAdmin) {
+        // Super admin: get data from all branches
+        topPackages = await getTopPackagesForSuperAdmin(selectedFilter, 5);
+      } else {
+        // Branch admin: get data from specific branch
+        // Get branch ID jika user adalah admin branch
+        if ($user) {
+          try {
+            branchId = await getBranchIdByUser($user.id);
+          } catch (err) {
+            console.log('User bukan admin branch atau error:', err);
+            branchId = null;
+          }
+        }
+
+        topPackages = await getTopPackagesByBranch(branchId, selectedFilter, 5);
+      }
+    } catch (err) {
+      console.error('Error loading top packages:', err);
+      error = err.message;
+    } finally {
+      loading = false;
+    }
+  }
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
@@ -9,6 +52,7 @@
   function selectFilter(filter) {
     selectedFilter = filter;
     isMenuOpen = false;
+    loadTopPackages(); // Reload data ketika filter berubah
   }
 
   function closeMenu() {
@@ -21,6 +65,11 @@
       isMenuOpen = false;
     }
   }
+
+  // Load data saat komponen mount
+  onMount(() => {
+    loadTopPackages();
+  });
 </script>
 
 <svelte:window on:click={handleClickOutside} />
@@ -75,160 +124,62 @@
 
   <!-- Content -->
   <div class="space-y-2 lg:space-y-3 xl:space-y-4">
-    <!-- Row component with name next to number -->
-    <div class="
-      bg-section
-      p-2 lg:p-3 xl:p-4 
-      transition-all duration-200
-      rounded-2xl
-    ">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
-          <div class="
-            w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
-            bg-indigo-100 
-            rounded-full 
-            flex items-center justify-center
-            text-indigo-700
-            font-semibold
-            text-xs lg:text-sm
-            flex-shrink-0
-          ">
-            1
-          </div>
-          <div class="min-w-0 flex-1">
-            <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">Paket Umrah Premium</h3>
-          </div>
-        </div>
-        <div class="text-right flex-shrink-0">
-          <p class="text-slate-900 font-bold text-sm lg:text-base">45</p>
-          <p class="text-slate-500 text-xs lg:text-sm">sales</p>
-        </div>
+    {#if loading}
+      <!-- Loading state -->
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <span class="ml-3 text-slate-600">Loading...</span>
       </div>
-    </div>
-
-    <div class="
-      bg-section
-      p-2 lg:p-3 xl:p-4 
-      transition-all duration-200
-      rounded-2xl
-    ">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
-          <div class="
-            w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
-            bg-indigo-100 
-            rounded-full
-            flex items-center justify-center
-            text-indigo-700
-            font-semibold
-            text-xs lg:text-sm
-            flex-shrink-0
-          ">
-            2
-          </div>
-          <div class="min-w-0 flex-1">
-            <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">Paket Umrah Reguler</h3>
-          </div>
-        </div>
-        <div class="text-right flex-shrink-0">
-          <p class="text-slate-900 font-bold text-sm lg:text-base">32</p>
-          <p class="text-slate-500 text-xs lg:text-sm">sales</p>
-        </div>
+    {:else if error}
+      <!-- Error state -->
+      <div class="text-center py-8">
+        <p class="text-red-600 text-sm">Error: {error}</p>
+        <button 
+          class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700"
+          on:click={loadTopPackages}
+        >
+          Coba Lagi
+        </button>
       </div>
-    </div>
-
-    <div class="
-      bg-section
-      p-2 lg:p-3 xl:p-4 
-      transition-all duration-200
-      rounded-2xl
-    ">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
-          <div class="
-            w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
-            bg-indigo-100 
-            rounded-full
-            flex items-center justify-center
-            text-indigo-700
-            font-semibold
-            text-xs lg:text-sm
-            flex-shrink-0
-          ">
-            3
-          </div>
-          <div class="min-w-0 flex-1">
-            <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">Paket Umrah Ekonomi</h3>
-          </div>
-        </div>
-        <div class="text-right flex-shrink-0">
-          <p class="text-slate-900 font-bold text-sm lg:text-base">28</p>
-          <p class="text-slate-500 text-xs lg:text-sm">sales</p>
-        </div>
+    {:else if topPackages.length === 0}
+      <!-- Empty state -->
+      <div class="text-center py-8">
+        <p class="text-slate-500 text-sm">Tidak ada data package untuk ditampilkan</p>
       </div>
-    </div>
-
-    <div class="
-      bg-section
-      p-2 lg:p-3 xl:p-4 
-      transition-all duration-200
-      rounded-2xl
-    ">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
-          <div class="
-            w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
-            bg-indigo-100 
-            rounded-full
-            flex items-center justify-center
-            text-indigo-700
-            font-semibold
-            text-xs lg:text-sm
-            flex-shrink-0
-          ">
-            4
-          </div>
-          <div class="min-w-0 flex-1">
-            <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">Tour Bali 5D4N</h3>
-          </div>
-        </div>
-        <div class="text-right flex-shrink-0">
-          <p class="text-slate-900 font-bold text-sm lg:text-base">25</p>
-          <p class="text-slate-500 text-xs lg:text-sm">sales</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="
-      bg-section
-      p-2 lg:p-3 xl:p-4 
-      transition-all duration-200
-      rounded-2xl
-    ">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
-          <div class="
-            w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
-            bg-indigo-100 
-            rounded-full
-            flex items-center justify-center
-            text-indigo-700
-            font-semibold
-            text-xs lg:text-sm
-            flex-shrink-0
-          ">
-            5
-          </div>
-          <div class="min-w-0 flex-1">
-            <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">Tour Lombok 4D3N</h3>
+    {:else}
+      <!-- Package list -->
+      {#each topPackages as pkg}
+        <div class="
+          bg-section
+          p-2 lg:p-3 xl:p-4 
+          transition-all duration-200
+          rounded-2xl
+        ">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
+              <div class="
+                w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
+                bg-indigo-100 
+                rounded-full 
+                flex items-center justify-center
+                text-indigo-700
+                font-semibold
+                text-xs lg:text-sm
+                flex-shrink-0
+              ">
+                {pkg.rank}
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">{pkg.name}</h3>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-slate-900 font-bold text-sm lg:text-base">{pkg.totalSales}</p>
+              <p class="text-slate-500 text-xs lg:text-sm">sales</p>
+            </div>
           </div>
         </div>
-        <div class="text-right flex-shrink-0">
-          <p class="text-slate-900 font-bold text-sm lg:text-base">22</p>
-          <p class="text-slate-500 text-xs lg:text-sm">sales</p>
-        </div>
-      </div>
-    </div>
+      {/each}
+    {/if}
   </div>
 </div>

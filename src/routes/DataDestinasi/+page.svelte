@@ -1,134 +1,292 @@
 <script>
-  let destinations = [
-    { id: 1, nama: 'Tokyo', negara: 'Japan', aktif: true, tanggalDibuat: '2024-01-15' },
-    { id: 2, nama: 'Paris', negara: 'France', aktif: true, tanggalDibuat: '2024-01-10' },
-    { id: 3, nama: 'London', negara: 'England', aktif: true, tanggalDibuat: '2024-01-08' },
-    { id: 4, nama: 'Seoul', negara: 'South Korea', aktif: true, tanggalDibuat: '2024-01-12' },
-    { id: 5, nama: 'Bangkok', negara: 'Thailand', aktif: true, tanggalDibuat: '2024-01-05' }
-  ];
+  import RoleGuard from '$lib/components/RoleGuard.svelte';
+  import { MapPin, X, Check, Trash2, Sun } from 'lucide-svelte';
+  import { supabase } from '$lib/supabase.js';
+  import { onMount } from 'svelte';
+  
+  // Data destinasi dari Supabase
+  let destinations = [];
+  let loading = true;
+  let error = null;
 
   let searchTerm = '';
   let statusFilter = 'all';
 
-  $: filteredDestinations = destinations.filter(dest => {
-    const matchesSearch = dest.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         dest.negara.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && dest.aktif) ||
-                         (statusFilter === 'inactive' && !dest.aktif);
-    return matchesSearch && matchesStatus;
-  });
+  // Load data dari Supabase
+  async function loadDestinations() {
+    try {
+      loading = true;
+      const { data, error: fetchError } = await supabase
+        .from('destinations')
+        .select(`
+          *,
+          outbound_dates (
+            start_date,
+            end_date,
+            price
+          ),
+          sales_consultant (
+            name
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-  function toggleStatus(id) {
-    destinations = destinations.map(dest => 
-      dest.id === id ? { ...dest, aktif: !dest.aktif } : dest
-    );
-  }
+      if (fetchError) {
+        throw fetchError;
+      }
 
-  function deleteDestination(id) {
-    if (confirm('Apakah Anda yakin ingin menghapus destinasi ini?')) {
-      destinations = destinations.filter(dest => dest.id !== id);
+      destinations = data || [];
+    } catch (err) {
+      error = err.message;
+      console.error('Error loading destinations:', err);
+    } finally {
+      loading = false;
     }
   }
+
+  // Toggle status destinasi
+  async function toggleStatus(id, currentStatus) {
+    try {
+      const newStatus = !currentStatus;
+      const { error: updateError } = await supabase
+        .from('destinations')
+        .update({ is_active: newStatus })
+        .eq('id', id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Update local state
+      const destination = destinations.find(d => d.id === id);
+      if (destination) {
+        destination.is_active = newStatus;
+      }
+    } catch (err) {
+      error = err.message;
+      console.error('Error updating destination status:', err);
+    }
+  }
+
+  // Hapus destinasi
+  async function deleteDestination(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus destinasi ini?')) {
+      try {
+        const { error: deleteError } = await supabase
+          .from('destinations')
+          .delete()
+          .eq('id', id);
+
+        if (deleteError) {
+          throw deleteError;
+        }
+
+        // Update local state
+        destinations = destinations.filter(d => d.id !== id);
+      } catch (err) {
+        error = err.message;
+        console.error('Error deleting destination:', err);
+      }
+    }
+  }
+
+  // Load data saat komponen mount
+  onMount(() => {
+    loadDestinations();
+  });
+
+  // Hitung statistik
+  $: totalDestinations = destinations.length;
+  $: activeDestinations = destinations.filter(d => d.is_active).length;
+  $: inactiveDestinations = destinations.filter(d => !d.is_active).length;
+
+  // Filter destinations berdasarkan search dan status
+  $: filteredDestinations = destinations.filter(destination => {
+    const matchesSearch = searchTerm === '' || 
+      destination.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || 
+      (statusFilter === 'active' && destination.is_active) ||
+      (statusFilter === 'inactive' && !destination.is_active);
+    
+    return matchesSearch && matchesStatus;
+  });
 </script>
 
-<div class="p-6 space-y-6">
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-slate-800 mb-2">Data Destinasi</h1>
-    <p class="text-slate-600">Kelola dan lihat semua data destinasi pelancongan</p>
-  </div>
+<RoleGuard allowedRoles={['super_admin', 'admin_branch']}>
+  <div class="p-6 space-y-6">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-800 mb-2">Data Destinasi</h1>
+      <p class="text-slate-600">Kelola dan lihat semua data destinasi pelancongan</p>
+    </div>
 
-  <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="md:col-span-2">
-        <label for="search" class="block text-sm font-medium text-slate-700 mb-2">Cari Destinasi</label>
-        <input
-          id="search"
-          type="text"
-          bind:value={searchTerm}
-          placeholder="Cari berdasarkan nama atau negara..."
-          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-        />
+    <!-- Error Message -->
+    {#if error}
+      <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+        <p class="text-red-700 text-sm">Error: {error}</p>
       </div>
-      <div>
-        <label for="statusFilter" class="block text-sm font-medium text-slate-700 mb-2">Status</label>
-        <select
-          id="statusFilter"
-          bind:value={statusFilter}
-          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-        >
-          <option value="all">Semua Status</option>
-          <option value="active">Aktif</option>
-          <option value="inactive">Non-Aktif</option>
-        </select>
+    {/if}
+
+    <!-- Statistik Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Total Destinasi -->
+      <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Total Destinasi</p>
+            <p class="text-3xl font-bold text-slate-800">{totalDestinations}</p>
+          </div>
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <MapPin class="w-6 h-6 text-green-600" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Destinasi Aktif -->
+      <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Destinasi Aktif</p>
+            <p class="text-3xl font-bold text-slate-800">{activeDestinations}</p>
+          </div>
+          <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+            <Sun class="w-6 h-6 text-yellow-600" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Destinasi Non-Aktif -->
+      <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Destinasi Non-Aktif</p>
+            <p class="text-3xl font-bold text-slate-800">{inactiveDestinations}</p>
+          </div>
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+            <X class="w-6 h-6 text-red-600" />
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead class="bg-slate-50">
-          <tr>
-            <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ID</th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Destinasi</th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Negara</th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-slate-100">
-          {#each filteredDestinations as destination}
-            <tr class="hover:bg-slate-50 transition-colors duration-200">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">#{destination.id}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 10c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 2c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 7.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                    </svg>
-                  </div>
-                  <span class="font-medium text-slate-900">{destination.nama}</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{destination.negara}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-1 text-xs font-medium rounded-full {destination.aktif ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                  {destination.aktif ? 'Aktif' : 'Non-Aktif'}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex items-center gap-2">
-                  <button
-                    on:click={() => toggleStatus(destination.id)}
-                    class="text-slate-600 hover:text-slate-800 transition-colors duration-200"
-                    title={destination.aktif ? 'Non-aktifkan' : 'Aktifkan'}
-                  >
-                    {#if destination.aktif}
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636"/>
-                      </svg>
+    <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+          <label for="search" class="block text-sm font-medium text-slate-700 mb-2">Cari Destinasi</label>
+          <input
+            id="search"
+            type="text"
+            bind:value={searchTerm}
+            placeholder="Cari berdasarkan nama destinasi..."
+            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label for="statusFilter" class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+          <select
+            id="statusFilter"
+            bind:value={statusFilter}
+            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          >
+            <option value="all">Semua Status</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Non-Aktif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
+      {#if loading}
+        <div class="p-8 text-center">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+          <p class="mt-2 text-slate-600">Memuat data destinasi...</p>
+        </div>
+      {:else}
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-slate-50">
+              <tr>
+                <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Destinasi</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Tanggal</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Sales Consultant</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-slate-100">
+              {#each filteredDestinations as destination}
+                <tr class="hover:bg-slate-50 transition-colors duration-200">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                        <MapPin class="w-4 h-4 text-slate-600" />
+                      </div>
+                      <span class="font-medium text-slate-900">{destination.name}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                    {#if destination.outbound_dates && destination.outbound_dates.length > 0}
+                      {#each destination.outbound_dates.slice(0, 1) as date}
+                        {date.start_date ? new Date(date.start_date).toLocaleDateString('id-ID') : '-'} - {date.end_date ? new Date(date.end_date).toLocaleDateString('id-ID') : '-'}
+                      {/each}
                     {:else}
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                      </svg>
+                      -
                     {/if}
-                  </button>
-                  <button
-                    on:click={() => deleteDestination(destination.id)}
-                    class="text-red-600 hover:text-red-800 transition-colors duration-200"
-                    title="Hapus"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                    {#if destination.outbound_dates && destination.outbound_dates.length > 0}
+                      {#each destination.outbound_dates.slice(0, 1) as date}
+                        {date.price || '-'}
+                      {/each}
+                    {:else}
+                      -
+                    {/if}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                    {destination.sales_consultant?.name || '-'}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs font-medium rounded-full {destination.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                      {destination.is_active ? 'Aktif' : 'Non-Aktif'}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex items-center gap-2">
+                      <button
+                        on:click={() => toggleStatus(destination.id, destination.is_active)}
+                        class="text-slate-600 hover:text-slate-800 transition-colors duration-200"
+                        title={destination.is_active ? 'Non-aktifkan' : 'Aktifkan'}
+                      >
+                        {#if destination.is_active}
+                          <X class="w-4 h-4" />
+                        {:else}
+                          <Check class="w-4 h-4" />
+                        {/if}
+                      </button>
+                      <button
+                        on:click={() => deleteDestination(destination.id)}
+                        class="text-red-600 hover:text-red-800 transition-colors duration-200"
+                        title="Hapus"
+                      >
+                        <Trash2 class="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+        
+        {#if filteredDestinations.length === 0}
+          <div class="p-8 text-center">
+            <MapPin class="w-12 h-12 text-slate-400 mx-auto mb-4" />
+            <p class="text-slate-600">Tidak ada destinasi yang ditemukan</p>
+          </div>
+        {/if}
+      {/if}
     </div>
   </div>
-</div>
+</RoleGuard>

@@ -52,15 +52,16 @@ Fitur manajemen musim dan kategori umrah memungkinkan admin untuk mengelola komp
   - Pilih Kategori (dropdown dari data yang tersedia)
   - Tanggal Berangkat dan Kembali (dalam periode musim)
   - Maskapai Penerbangan (dropdown pilihan airline)
-  - Harga per Pax (dengan format currency Indonesia)
-  - Kuota Tersedia
-  - Deskripsi Paket
-  - Status Paket (Aktif/Non-Aktif/Draft)
+  - Harga per Pax (dengan format currency Malaysia)
+- Harga Anak dan Infant (CWB, CNB, Infant)
+- Kuota Tersedia
+- Deskripsi Paket
+- Status Paket (Aktif/Non-Aktif/Draft)
 
 - **Fitur Khusus:**
   - Preview detail paket yang dipilih
   - Validasi tanggal sesuai periode musim
-  - Format harga otomatis dalam Rupiah
+  - Format harga otomatis dalam Ringgit Malaysia
   - Dropdown yang terintegrasi dengan data musim dan kategori
 
 ### 4. Data Overview (Halaman Data Umrah)

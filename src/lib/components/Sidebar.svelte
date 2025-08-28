@@ -1,5 +1,23 @@
 <script>
   import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
+  import { user, userRole, signOut } from '$lib/stores/auth.js';
+  
+  // Import Lucide icons
+  import { 
+    Home, 
+    Users, 
+    Calendar, 
+    Building2, 
+    MapPin, 
+    Database, 
+    Settings, 
+    User, 
+    LogOut, 
+    Menu,
+    Plane,
+    UserCheck
+  } from 'lucide-svelte';
   
   // Props untuk sidebar
   export let isCollapsed = false;
@@ -12,6 +30,7 @@
     { name: 'Data Umrah', icon: 'mosque', href: '/DataUmrah', isActive: false },
     { name: 'Input Destinasi', icon: 'map-pin', href: '/InputDestinasi', isActive: false },
     { name: 'Data Destinasi', icon: 'database', href: '/DataDestinasi', isActive: false },
+    { name: 'Input Airline & Sales Consultant', icon: 'plane', href: '/InputAirline&SalesConsultant', isActive: false },
     { name: 'Pengaturan', icon: 'settings', href: '/Pengaturan', isActive: false }
 
   ];
@@ -28,6 +47,20 @@
   function toggleMobile() {
     isMobileOpen = !isMobileOpen;
   }
+  
+  // Handle logout
+  async function handleLogout() {
+    try {
+      await signOut();
+      goto('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  }
+  
+  // Get role display name
+  $: roleDisplayName = $userRole === 'super_admin' ? 'Super Admin' : 
+                       $userRole === 'admin_branch' ? 'Admin Branch' : 'User';
 </script>
 
 <!-- Mobile Toggle Button -->
@@ -36,9 +69,7 @@
     on:click={toggleMobile}
     class="p-2 bg-purple-600 text-white rounded-lg shadow-lg"
   >
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
+    <Menu class="w-6 h-6" />
   </button>
 </div>
 
@@ -85,48 +116,21 @@
             }
           ">
             {#if item.icon === 'home'}
-              <!-- Heroicon: home -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
-                <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.25 8.25a.75.75 0 1 1-1.06 1.06l-.47-.47V20.5a1 1 0 0 1-1 1h-3.25a.75.75 0 0 1-.75-.75V16a1.5 1.5 0 0 0-1.5-1.5h-2a1.5 1.5 0 0 0-1.5 1.5v4.75a.75.75 0 0 1-.75.75H5.25a1 1 0 0 1-1-1v-7.82l-.47.47a.75.75 0 1 1-1.06-1.06l8.25-8.25Z" />
-              </svg>
+              <Home class="h-4 w-4" />
             {:else if item.icon === 'users'}
-              <!-- users icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
-                <path d="M12 14a7 7 0 0 0-7 7H2"/>
-              </svg>
+              <Users class="h-4 w-4" />
             {:else if item.icon === 'settings'}
-              <!-- settings icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 0 0 2.572-1.065Z"/>
-              </svg>
+              <Settings class="h-4 w-4" />
             {:else if item.icon === 'calendar'}
-              <!-- calendar icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
-                <path d="M16 2v4"/>
-                <path d="M8 2v4"/>
-                <path d="M3 10h18"/>
-              </svg>
+              <Calendar class="h-4 w-4" />
             {:else if item.icon === 'mosque'}
-              <!-- mosque icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-              </svg>
+              <Building2 class="h-4 w-4" />
             {:else if item.icon === 'map-pin'}
-              <!-- map-pin icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M19 10c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 2c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 7.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-              </svg>
+              <MapPin class="h-4 w-4" />
             {:else if item.icon === 'database'}
-              <!-- database icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2Z"/>
-                <path d="M16 11a4 4 0 0 1-8 0"/>
-              </svg>
+              <Database class="h-4 w-4" />
+            {:else if item.icon === 'plane'}
+              <Plane class="h-4 w-4" />
             {/if}
           </span>
           <span class="
@@ -139,6 +143,28 @@
 
     <!-- Spacer -->
     <div class="h-[520px]"></div>
+
+    <!-- User Info & Logout -->
+    {#if $user}
+      <div class="border-t border-slate-200 pt-4 mb-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+            <User class="w-4 h-4 text-purple-600" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-slate-700 truncate">{$user.email}</div>
+            <div class="text-xs text-slate-500">{roleDisplayName}</div>
+          </div>
+        </div>
+        <button
+          on:click={handleLogout}
+          class="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          <LogOut class="w-4 h-4" />
+          Logout
+        </button>
+      </div>
+    {/if}
 
     <!-- Footer -->
     <footer class="pt-3 pb-2">
@@ -192,48 +218,21 @@
             }
           ">
             {#if item.icon === 'home'}
-              <!-- Heroicon: home -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
-                <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.25 8.25a.75.75 0 1 1-1.06 1.06l-.47-.47V20.5a1 1 0 0 1-1 1h-3.25a.75.75 0 0 1-.75-.75V16a1.5 1.5 0 0 0-1.5-1.5h-2a1.5 1.5 0 0 0-1.5 1.5v4.75a.75.75 0 0 1-.75.75H5.25a1 1 0 0 1-1-1v-7.82l-.47.47a.75.75 0 1 1-1.06-1.06l8.25-8.25Z" />
-              </svg>
+              <Home class="h-4 w-4" />
             {:else if item.icon === 'users'}
-              <!-- users icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
-                <path d="M12 14a7 7 0 0 0-7 7H2"/>
-              </svg>
+              <Users class="h-4 w-4" />
             {:else if item.icon === 'settings'}
-              <!-- settings icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 0 0 2.572-1.065Z"/>
-              </svg>
+              <Settings class="h-4 w-4" />
             {:else if item.icon === 'calendar'}
-              <!-- calendar icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
-                <path d="M16 2v4"/>
-                <path d="M8 2v4"/>
-                <path d="M3 10h18"/>
-              </svg>
+              <Calendar class="h-4 w-4" />
             {:else if item.icon === 'mosque'}
-              <!-- mosque icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-                <path d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
-              </svg>
+              <Building2 class="h-4 w-4" />
             {:else if item.icon === 'map-pin'}
-              <!-- map-pin icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M19 10c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 2c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 7.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-              </svg>
+              <MapPin class="h-4 w-4" />
             {:else if item.icon === 'database'}
-              <!-- database icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
-                <path d="M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2Z"/>
-                <path d="M16 11a4 4 0 0 1-8 0"/>
-              </svg>
+              <Database class="h-4 w-4" />
+            {:else if item.icon === 'plane'}
+              <Plane class="h-4 w-4" />
             {/if}
           </span>
           <span class="
@@ -243,6 +242,28 @@
         </a>
       {/each}
     </nav>
+
+    <!-- User Info & Logout -->
+    {#if $user}
+      <div class="border-t border-slate-200 pt-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
+            <User class="w-3 h-3 text-purple-600" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-medium text-slate-700 truncate">{$user.email}</div>
+            <div class="text-[10px] text-slate-500">{roleDisplayName}</div>
+          </div>
+        </div>
+        <button
+          on:click={handleLogout}
+          class="w-full flex items-center justify-center gap-2 px-2 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          <LogOut class="w-3 h-3" />
+          Logout
+        </button>
+      </div>
+    {/if}
 
     <!-- Footer -->
     <div class="absolute bottom-5 left-5 right-5">

@@ -1,3 +1,5 @@
+import { supabase } from '$lib/supabase.js';
+
 // Data sample pelanggan untuk Rayhar Admin Dashboard
 export const customersData = [
   {
@@ -108,17 +110,18 @@ export const customersData = [
 
 // Fungsi helper untuk mendapatkan inisial nama
 export function getInitials(name) {
-  return name.split(' ').map(word => word[0]).join('').substring(0, 2);
+  if (!name) return 'NA';
+  return name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
 }
 
 // Fungsi untuk mendapatkan warna status
 export function getStatusColor(status) {
-  switch (status) {
-    case 'Confirmed':
+  switch (status?.toLowerCase()) {
+    case 'confirmed':
       return 'bg-green-100 text-green-800 border-green-200';
-    case 'Pending':
+    case 'pending':
       return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'Cancelled':
+    case 'cancelled':
       return 'bg-red-100 text-red-800 border-red-200';
     default:
       return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -127,10 +130,10 @@ export function getStatusColor(status) {
 
 // Fungsi untuk mendapatkan warna package
 export function getPackageColor(packageType) {
-  switch (packageType) {
-    case 'Umrah':
+  switch (packageType?.toLowerCase()) {
+    case 'umrah':
       return 'bg-purple-100 text-purple-800 border-purple-200';
-    case 'Pelancongan':
+    case 'pelancongan':
       return 'bg-yellow-100 text-yellow-800 border-yellow-200';
     default:
       return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -153,4 +156,64 @@ export function filterCustomers(customers, filters) {
     }
     return true;
   });
+}
+
+// Fungsi untuk mengambil data pelanggan dari Supabase
+export async function fetchCustomersData() {
+  try {
+    const { data, error } = await supabase
+      .from('bookings')
+      .select(`
+        id,
+        gelaran,
+        nama,
+        nokp,
+        telefon,
+        email,
+        alamat,
+        poskod,
+        negeri,
+        bandar,
+        bilangan,
+        status,
+        jenis_pelancongan,
+        created_at,
+        branches(name),
+        destinations(name),
+        package_types(name),
+        sales_consultant(name)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching customers:', error);
+      return [];
+    }
+
+    // Transform data untuk kompatibilitas dengan komponen yang ada
+    return data.map(booking => ({
+      id: booking.id,
+      name: `${booking.gelaran} ${booking.nama}`,
+      email: booking.email,
+      phone: booking.telefon,
+      branch: booking.branches?.name || '-',
+      package: booking.package_types?.name || booking.jenis_pelancongan || '-',
+      category: booking.destinations?.name || '-',
+      status: booking.status || 'pending',
+      price: booking.bilangan ? `${booking.bilangan} pax` : '-',
+      date: new Date(booking.created_at).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }),
+      avatar: getInitials(booking.nama),
+      consultant: booking.sales_consultant?.name || '-',
+      address: `${booking.alamat}, ${booking.poskod} ${booking.bandar}, ${booking.negeri}`,
+      nokp: booking.nokp,
+      jenis_pelancongan: booking.jenis_pelancongan
+    }));
+  } catch (error) {
+    console.error('Error in fetchCustomersData:', error);
+    return [];
+  }
 }

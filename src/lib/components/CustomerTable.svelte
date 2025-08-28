@@ -1,15 +1,35 @@
 <script>
-  import { customersData, getInitials, getStatusColor, getPackageColor } from '$lib/data/customers.js';
+  import { onMount } from 'svelte';
+  import { fetchCustomersData, getInitials, getStatusColor, getPackageColor } from '$lib/data/customers.js';
+  import { Loader2, AlertTriangle, Users } from 'lucide-svelte';
+  
+  // State untuk data
+  let customersData = [];
+  let loading = true;
+  let error = null;
   
   // State untuk pagination
   let currentPage = 1;
-  let itemsPerPage = 5;
+  let itemsPerPage = 10;
   
   // State untuk filter
   let searchTerm = '';
   let statusFilter = '';
   let packageFilter = '';
   let branchFilter = '';
+  
+  // Load data saat komponen dimount
+  onMount(async () => {
+    try {
+      loading = true;
+      customersData = await fetchCustomersData();
+    } catch (err) {
+      error = 'Gagal memuat data pelanggan';
+      console.error('Error loading customers:', err);
+    } finally {
+      loading = false;
+    }
+  });
   
   // Data yang sudah difilter
   $: filteredCustomers = customersData.filter(customer => {
@@ -73,197 +93,213 @@
     <div class="flex items-center justify-between mb-4">
       <div>
         <h2 class="text-xl font-semibold text-gray-900">Data Pelanggan</h2>
-        <p class="text-sm text-gray-500">Daftar semua pelanggan dan pemesanan paket</p>
+        <p class="text-sm text-gray-500">Daftar semua pelanggan dan pemesanan paket dari database</p>
       </div>
-      <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-        + Tambah Pelanggan
-      </button>
+
     </div>
     
     <!-- Filter Bar -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-      <!-- Search -->
-      <div>
+    <div class="flex flex-wrap gap-4 items-center">
+      <!-- Search Input -->
+      <div class="flex-1 min-w-64">
         <input
           type="text"
-          placeholder="Cari pelanggan..."
           bind:value={searchTerm}
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          placeholder="Cari nama, email, atau telefon..."
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
       </div>
       
       <!-- Status Filter -->
-      <div>
-        <select
-          bind:value={statusFilter}
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-        >
-          <option value="">Semua Status</option>
-          {#each uniqueStatuses as status}
-            <option value={status}>{status}</option>
-          {/each}
-        </select>
-      </div>
+      <select
+        bind:value={statusFilter}
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+      >
+        <option value="">Semua Status</option>
+        {#each uniqueStatuses as status}
+          <option value={status}>{status}</option>
+        {/each}
+      </select>
       
       <!-- Package Filter -->
-      <div>
-        <select
-          bind:value={packageFilter}
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-        >
-          <option value="">Semua Paket</option>
-          {#each uniquePackages as packageType}
-            <option value={packageType}>{packageType}</option>
-          {/each}
-        </select>
-      </div>
+      <select
+        bind:value={packageFilter}
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+      >
+        <option value="">Semua Paket</option>
+        {#each uniquePackages as packageType}
+          <option value={packageType}>{packageType}</option>
+        {/each}
+      </select>
       
       <!-- Branch Filter -->
-      <div>
-        <select
-          bind:value={branchFilter}
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-        >
-          <option value="">Semua Cabang</option>
-          {#each uniqueBranches as branch}
-            <option value={branch}>{branch}</option>
-          {/each}
-        </select>
-      </div>
+      <select
+        bind:value={branchFilter}
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+      >
+        <option value="">Semua Cawangan</option>
+        {#each uniqueBranches as branch}
+          <option value={branch}>{branch}</option>
+        {/each}
+      </select>
       
       <!-- Reset Button -->
-      <div>
-        <button
-          on:click={resetFilters}
-          class="w-full px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          Reset
-        </button>
-      </div>
+      <button
+        on:click={resetFilters}
+        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+      >
+        Reset
+      </button>
     </div>
   </div>
 
-  <!-- Tabel -->
-  <div class="overflow-x-auto">
-    <table class="w-full">
-      <thead class="bg-gray-50 border-b border-gray-100">
-        <tr>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            PELANGGAN
-          </th>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            CAWANGAN
-          </th>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            PAKEJ
-          </th>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            KATEGORI
-          </th>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            STATUS
-          </th>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            HARGA
-          </th>
-          <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            TARIKH
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-100">
-        {#each paginatedCustomers as customer}
-          <tr class="hover:bg-gray-50 transition-colors cursor-pointer">
-            <!-- Kolom PELANGGAN -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 h-10 w-10">
-                  <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                    <span class="text-sm font-medium text-purple-600">
-                      {getInitials(customer.name)}
-                    </span>
+  <!-- Loading State -->
+  {#if loading}
+    <div class="p-8 text-center">
+      <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-purple-500 hover:bg-purple-400 transition ease-in-out duration-150 cursor-not-allowed">
+        <Loader2 class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+        Memuat data pelanggan...
+      </div>
+    </div>
+  {:else if error}
+    <div class="p-8 text-center">
+      <div class="text-red-600 mb-4">
+        <AlertTriangle class="mx-auto h-12 w-12 text-red-400" />
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Gagal memuat data</h3>
+      <p class="text-gray-500 mb-4">{error}</p>
+      <button 
+        on:click={() => window.location.reload()}
+        class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+      >
+        Coba Lagi
+      </button>
+    </div>
+  {:else if customersData.length === 0}
+    <div class="p-8 text-center">
+      <div class="text-gray-400 mb-4">
+        <Users class="mx-auto h-12 w-12" />
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data pelanggan</h3>
+      <p class="text-gray-500">Belum ada data pelanggan yang tersedia.</p>
+    </div>
+  {:else}
+    <!-- Tabel -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              PELANGGAN
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              CAWANGAN
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              PAKEJ
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              DESTINASI
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              STATUS
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              BILANGAN
+            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              TARIKH
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100">
+          {#each paginatedCustomers as customer}
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer">
+              <!-- Kolom PELANGGAN -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                      <span class="text-sm font-medium text-purple-600">
+                        {customer.avatar}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{customer.name}</div>
+                    <div class="text-sm text-gray-500">{customer.email}</div>
+                    <div class="text-sm text-gray-500">{customer.phone}</div>
                   </div>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">{customer.name}</div>
-                  <div class="text-sm text-gray-500">{customer.email}</div>
-                  <div class="text-sm text-gray-500">{customer.phone}</div>
-                </div>
-              </div>
-            </td>
-            
-            <!-- Kolom CAWANGAN -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{customer.branch}</div>
-            </td>
-            
-            <!-- Kolom PAKEJ -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border {getPackageColor(customer.package)}">
-                {customer.package}
-              </span>
-            </td>
-            
-            <!-- Kolom KATEGORI -->
-            <td class="px-6 py-4">
-              <div class="text-sm text-gray-900 max-w-xs">{customer.category}</div>
-            </td>
-            
-            <!-- Kolom STATUS -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border {getStatusColor(customer.status)}">
-                {customer.status}
-              </span>
-            </td>
-            
-            <!-- Kolom HARGA -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">{customer.price}</div>
-            </td>
-            
-            <!-- Kolom TARIKH -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{customer.date}</div>
-            </td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <div class="px-6 py-4 border-t border-gray-100">
-    <div class="flex items-center justify-between">
-      <div class="text-sm text-gray-700">
-        Menampilkan <span class="font-medium">{startIndex + 1}</span> sampai <span class="font-medium">{Math.min(endIndex, filteredCustomers.length)}</span> dari <span class="font-medium">{filteredCustomers.length}</span> hasil
-      </div>
-      <div class="flex items-center space-x-2">
-        <button 
-          on:click={prevPage}
-          disabled={currentPage === 1}
-          class="px-3 py-1 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Sebelumnya
-        </button>
-        
-        <!-- Page Numbers -->
-        {#each Array.from({length: totalPages}, (_, i) => i + 1) as pageNum}
-          <button 
-            on:click={() => currentPage = pageNum}
-            class="px-3 py-1 text-sm border rounded-md {currentPage === pageNum ? 'text-white bg-purple-600 border-purple-600' : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'}"
-          >
-            {pageNum}
-          </button>
-        {/each}
-        
-        <button 
-          on:click={nextPage}
-          disabled={currentPage === totalPages}
-          class="px-3 py-1 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Selanjutnya
-        </button>
-      </div>
+              </td>
+              
+              <!-- Kolom CAWANGAN -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{customer.branch}</div>
+              </td>
+              
+              <!-- Kolom PAKEJ -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border {getPackageColor(customer.package)}">
+                  {customer.package}
+                </span>
+              </td>
+              
+              <!-- Kolom DESTINASI -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{customer.destination}</div>
+              </td>
+              
+              <!-- Kolom STATUS -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {getStatusColor(customer.status)}">
+                  {customer.status}
+                </span>
+              </td>
+              
+              <!-- Kolom BILANGAN -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{customer.pax}</div>
+              </td>
+              
+              <!-- Kolom TARIKH -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{customer.date}</div>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
     </div>
-  </div>
+    
+    <!-- Pagination -->
+    {#if totalPages > 1}
+      <div class="px-6 py-4 border-t border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-700">
+            Menampilkan {startIndex + 1} sampai {Math.min(endIndex, filteredCustomers.length)} dari {filteredCustomers.length} hasil
+          </div>
+          <div class="flex items-center space-x-2">
+            <button
+              on:click={prevPage}
+              disabled={currentPage === 1}
+              class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Sebelumnya
+            </button>
+            <span class="text-sm text-gray-700">
+              Halaman {currentPage} dari {totalPages}
+            </span>
+            <button
+              on:click={nextPage}
+              disabled={currentPage === totalPages}
+              class="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Seterusnya
+            </button>
+          </div>
+        </div>
+      </div>
+    {/if}
+  {/if}
 </div>

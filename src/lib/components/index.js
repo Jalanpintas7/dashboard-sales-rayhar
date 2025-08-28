@@ -13,3 +13,4 @@ export { default as UmrahCategoryInput } from './UmrahCategoryInput.svelte';
 export { default as UmrahDataOverview } from './UmrahCategoryInput.svelte';
 export { default as UmrahPackageCreator } from './UmrahPackageCreator.svelte';
 export { default as UmrahSeasonInput } from './UmrahSeasonInput.svelte';
+export { default as AirlineInput } from './AirlineInput.svelte';

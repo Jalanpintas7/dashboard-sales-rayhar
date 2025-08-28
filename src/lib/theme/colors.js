@@ -1,7 +1,7 @@
 // Theme Color Palette
 export const themeColors = {
   // Primary Colors
-  primary: '#8B5CF6',      // Vibrant medium purple
+  primary: '#942392',      // Vibrant medium purple
   secondary: '#93C5FD',    // Light pastel blue
   tertiary: '#FCA5A5',     // Soft muted coral/light salmon pink
   quaternary: '#FEF3C7',   // Pale creamy yellow

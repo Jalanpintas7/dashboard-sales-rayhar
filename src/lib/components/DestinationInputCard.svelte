@@ -1,33 +1,140 @@
 <script>
-  // State untuk form input destinasi
-  let destinationData = {
-    namaDestinasi: '',
-    negara: '',
-    deskripsi: '',
-    gambar: null,
-    aktif: true
+  import { MapPin, Search, ChevronDown } from 'lucide-svelte';
+  import { supabase } from '$lib/supabase.js';
+  import { onMount } from 'svelte';
+  
+  // State untuk form input paket destinasi
+  let packageData = {
+    destination_id: null,
+    start_date: '',
+    end_date: '',
+    price: '',
+    is_active: true
   };
 
-  // Handle form submission
-  function handleSubmit() {
-    // TODO: Implementasi logika untuk menyimpan destinasi
-    console.log('Data destinasi:', destinationData);
-    
-    // Reset form setelah submit
-    destinationData = {
-      namaDestinasi: '',
-      negara: '',
-      deskripsi: '',
-      gambar: null,
-      aktif: true
-    };
+  let loading = false;
+  let message = '';
+  
+  // State untuk dropdown destinasi
+  let destinations = [];
+  let filteredDestinations = [];
+  let searchQuery = '';
+  let isDropdownOpen = false;
+  let selectedDestination = null;
+
+  // Load destinations saat komponen mount
+  onMount(async () => {
+    await loadDestinations();
+  });
+
+  // Load data destinations dari database
+  async function loadDestinations() {
+    try {
+      const { data, error } = await supabase
+        .from('destinations')
+        .select('id, name, created_at')
+        .eq('is_active', true)
+        .order('name');
+
+      if (error) {
+        console.error('Error loading destinations:', error);
+        return;
+      }
+
+      destinations = data || [];
+      filteredDestinations = [...destinations];
+    } catch (error) {
+      console.error('Error loading destinations:', error);
+    }
   }
 
-  // Handle file upload
-  function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-      destinationData.gambar = file;
+  // Filter destinations berdasarkan search query
+  function filterDestinations() {
+    if (!searchQuery.trim()) {
+      filteredDestinations = [...destinations];
+    } else {
+      filteredDestinations = destinations.filter(destination =>
+        destination.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+  }
+
+  // Handle search input
+  function handleSearchInput(event) {
+    searchQuery = event.target.value;
+    filterDestinations();
+  }
+
+  // Select destination
+  function selectDestination(destination) {
+    selectedDestination = destination;
+    packageData.destination_id = destination.id;
+    searchQuery = destination.name;
+    isDropdownOpen = false;
+  }
+
+  // Toggle dropdown
+  function toggleDropdown() {
+    isDropdownOpen = !isDropdownOpen;
+    if (isDropdownOpen) {
+      filterDestinations();
+    }
+  }
+
+  // Handle form submission
+  async function handleSubmit() {
+    loading = true;
+    message = '';
+    
+    try {
+      // Validasi data
+      if (!packageData.destination_id) {
+        throw new Error('Pilih destinasi terlebih dahulu');
+      }
+      
+      if (!packageData.start_date || !packageData.end_date) {
+        throw new Error('Tanggal mulai dan selesai harus diisi');
+      }
+      
+      if (!packageData.price) {
+        throw new Error('Harga harus diisi');
+      }
+
+      // Insert data ke tabel outbound_dates
+      const { data, error } = await supabase
+        .from('outbound_dates')
+        .insert([
+          {
+            destination_id: packageData.destination_id,
+            start_date: packageData.start_date,
+            end_date: packageData.end_date,
+            price: packageData.price.toString()
+          }
+        ])
+        .select();
+
+      if (error) {
+        throw error;
+      }
+
+      message = 'Paket destinasi berhasil dibuat!';
+      
+      // Reset form setelah submit
+      packageData = {
+        destination_id: null,
+        start_date: '',
+        end_date: '',
+        price: '',
+        is_active: true
+      };
+      selectedDestination = null;
+      searchQuery = '';
+      
+    } catch (error) {
+      console.error('Error membuat paket destinasi:', error);
+      message = 'Gagal membuat paket destinasi: ' + error.message;
+    } finally {
+      loading = false;
     }
   }
 </script>
@@ -36,104 +143,136 @@
   <!-- Header dengan ikon -->
   <div class="flex items-center gap-3 mb-6">
     <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-yellow-600">
-        <path d="M19 10c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 2c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 7.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-      </svg>
+      <MapPin class="w-5 h-5 text-yellow-600" />
     </div>
-    <h2 class="text-xl font-bold text-slate-800">Tambah Destinasi Baru</h2>
+    <h2 class="text-xl font-bold text-slate-800">Tambah Paket Destinasi</h2>
   </div>
 
+  <!-- Message -->
+  {#if message}
+    <div class="mb-4 p-3 rounded-lg {message.includes('berhasil') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+      {message}
+    </div>
+  {/if}
+
   <form on:submit|preventDefault={handleSubmit} class="space-y-6">
-    <!-- Nama Destinasi -->
-    <div>
-      <label for="namaDestinasi" class="block text-sm font-medium text-slate-700 mb-2">
-        Nama Destinasi *
+    <!-- Tujuan Destinasi Dropdown -->
+    <div class="relative">
+      <label class="block text-sm font-medium text-slate-700 mb-2">
+        Tujuan Destinasi
       </label>
-      <input
-        id="namaDestinasi"
-        type="text"
-        bind:value={destinationData.namaDestinasi}
-        required
-        placeholder="Contoh: Tokyo, Paris, London"
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-      />
-    </div>
-
-    <!-- Negara -->
-    <div>
-      <label for="negara" class="block text-sm font-medium text-slate-700 mb-2">
-        Negara *
-      </label>
-      <input
-        id="negara"
-        type="text"
-        bind:value={destinationData.negara}
-        required
-        placeholder="Contoh: Japan, France, England"
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-      />
-    </div>
-
-    <!-- Deskripsi -->
-    <div>
-      <label for="deskripsi" class="block text-sm font-medium text-slate-700 mb-2">
-        Deskripsi Destinasi
-      </label>
-      <textarea
-        id="deskripsi"
-        bind:value={destinationData.deskripsi}
-        rows="4"
-        placeholder="Masukkan deskripsi destinasi pelancongan..."
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 resize-none"
-      ></textarea>
-    </div>
-
-    <!-- Upload Gambar -->
-    <div>
-      <label for="gambar" class="block text-sm font-medium text-slate-700 mb-2">
-        Gambar Destinasi
-      </label>
-      <div class="flex items-center justify-center w-full">
-        <label for="gambar" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors duration-200">
-          <div class="flex flex-col items-center justify-center pt-5 pb-6">
-            <svg class="w-8 h-8 mb-4 text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-            </svg>
-            <p class="mb-2 text-sm text-slate-500">
-              <span class="font-semibold">Klik untuk upload</span> atau drag and drop
-            </p>
-            <p class="text-xs text-slate-500">PNG, JPG, GIF (MAX. 10MB)</p>
+      <div class="relative">
+        <div class="flex items-center border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-yellow-500 focus-within:border-transparent transition-all duration-200">
+          <div class="flex items-center px-3">
+            <Search class="w-4 h-4 text-slate-400" />
           </div>
-          <input 
-            id="gambar" 
-            type="file" 
-            accept="image/*" 
-            on:change={handleFileUpload}
-            class="hidden" 
+          <input
+            type="text"
+            bind:value={searchQuery}
+            on:input={handleSearchInput}
+            on:focus={() => isDropdownOpen = true}
+            placeholder="Cari destinasi..."
+            class="flex-1 px-3 py-3 border-none outline-none bg-transparent"
+            required
           />
+          <button
+            type="button"
+            on:click={toggleDropdown}
+            class="px-3 py-3 hover:bg-slate-50 transition-colors"
+          >
+            <ChevronDown class="w-4 h-4 text-slate-400 {isDropdownOpen ? 'rotate-180' : ''}" />
+          </button>
+        </div>
+        
+        <!-- Dropdown Menu -->
+        {#if isDropdownOpen}
+          <div class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+            {#if filteredDestinations.length === 0}
+              <div class="px-4 py-3 text-slate-500 text-sm">
+                Tidak ada destinasi ditemukan
+              </div>
+            {:else}
+              {#each filteredDestinations as destination}
+                <button
+                  type="button"
+                  on:click={() => selectDestination(destination)}
+                  class="w-full px-4 py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0"
+                >
+                  <div class="font-medium text-slate-800">{destination.name}</div>
+                  <div class="text-sm text-slate-500">ID: {destination.id}</div>
+                </button>
+              {/each}
+            {/if}
+          </div>
+        {/if}
+      </div>
+      
+      <!-- Selected Destination Display -->
+      {#if selectedDestination}
+        <div class="mt-2 p-2 bg-yellow-50 rounded-lg">
+          <div class="text-sm text-yellow-800">
+            <span class="font-medium">Dipilih:</span> {selectedDestination.name}
+          </div>
+        </div>
+      {/if}
+    </div>
+
+    <!-- Start Date dan End Date -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="startDate" class="block text-sm font-medium text-slate-700 mb-2">
+          Tanggal Mulai
         </label>
+        <input
+          id="startDate"
+          type="date"
+          bind:value={packageData.start_date}
+          required
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+        />
+      </div>
+      <div>
+        <label for="endDate" class="block text-sm font-medium text-slate-700 mb-2">
+          Tanggal Selesai
+        </label>
+        <input
+          id="endDate"
+          type="date"
+          bind:value={packageData.end_date}
+          required
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+        />
       </div>
     </div>
 
-    <!-- Status Aktif -->
-    <div class="flex items-center gap-3">
-      <input
-        id="aktif"
-        type="checkbox"
-        bind:checked={destinationData.aktif}
-        class="w-4 h-4 text-yellow-600 bg-slate-100 border-slate-300 rounded focus:ring-yellow-500 focus:ring-2"
-      />
-      <label for="aktif" class="text-sm font-medium text-slate-700">
-        Destinasi Aktif
+    <!-- Price -->
+    <div>
+      <label for="price" class="block text-sm font-medium text-slate-700 mb-2">
+        Harga (RM)
       </label>
+      <input
+        id="price"
+        type="number"
+        bind:value={packageData.price}
+        required
+        placeholder="Contoh: 5000000"
+        min="0"
+        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+      />
     </div>
 
     <!-- Tombol Submit -->
     <button
       type="submit"
-      class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg"
+      disabled={loading}
+      class="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg"
     >
-      Tambah Destinasi
+      {loading ? 'Membuat Paket...' : 'Buat Paket Destinasi'}
     </button>
   </form>
 </div>
+
+<!-- Click outside to close dropdown -->
+{#if isDropdownOpen}
+  <div class="fixed inset-0 z-40" on:click={() => isDropdownOpen = false}></div>
+{/if}
