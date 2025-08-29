@@ -30,8 +30,7 @@
     { name: 'Data Umrah', icon: 'mosque', href: '/DataUmrah', isActive: false },
     { name: 'Input Destinasi', icon: 'map-pin', href: '/InputDestinasi', isActive: false },
     { name: 'Data Destinasi', icon: 'database', href: '/DataDestinasi', isActive: false },
-    { name: 'Input Airline & Sales Consultant', icon: 'plane', href: '/InputAirline&SalesConsultant', isActive: false },
-    { name: 'Pengaturan', icon: 'settings', href: '/Pengaturan', isActive: false }
+    { name: 'Input Airline', icon: 'plane', href: '/InputAirline', isActive: false }
 
   ];
   

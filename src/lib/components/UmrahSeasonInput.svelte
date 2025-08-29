@@ -3,8 +3,7 @@
   import { onMount } from 'svelte';
 
   let seasonData = {
-    namaMusim: '',
-    status: 'aktif'
+    namaMusim: ''
   };
 
   let isLoading = false;
@@ -23,8 +22,7 @@
     try {
       // Persiapkan data untuk database
       const seasonDataForDB = {
-        name: seasonData.namaMusim.trim(),
-        is_active: seasonData.status === 'aktif'
+        name: seasonData.namaMusim.trim()
       };
 
       // Simpan ke database menggunakan Supabase
@@ -35,8 +33,7 @@
       
       // Reset form setelah submit berhasil
       seasonData = {
-        namaMusim: '',
-        status: 'aktif'
+        namaMusim: ''
       };
       
     } catch (error) {
@@ -95,25 +92,10 @@
       />
     </div>
 
-    <div>
-      <label for="status" class="block text-sm font-medium text-slate-700 mb-2">
-        Status
-      </label>
-      <select
-        id="status"
-        bind:value={seasonData.status}
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-        disabled={isLoading}
-      >
-        <option value="aktif">Aktif</option>
-        <option value="nonaktif">Non-Aktif</option>
-      </select>
-    </div>
-
     <button
       type="submit"
       disabled={isLoading}
-      class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
+      class="w-full bg-[#942392] hover:bg-[#7a1d7a] disabled:bg-[#b84bb8] text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
     >
       {#if isLoading}
         <div class="flex items-center justify-center gap-2">

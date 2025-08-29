@@ -7,18 +7,17 @@ export default {
     extend: {
       colors: {
         // Custom Theme Colors
-        primary: {
-          50: '#F5F3FF',
-          100: '#EDE9FE',
-          200: '#DDD6FE',
-          300: '#C4B5FD',
-          400: '#A78BFA',
-          500: '#8B5CF6',  // Primary color
-          600: '#7C3AED',
-          700: '#6D28D9',
-          800: '#5B21B6',
-          900: '#4C1D95'
-        },
+        primary: '#942392',  // Primary color - sesuai dengan theme colors
+        'primary-50': '#F5F3FF',
+        'primary-100': '#EDE9FE',
+        'primary-200': '#DDD6FE',
+        'primary-300': '#C4B5FD',
+        'primary-400': '#A78BFA',
+        'primary-500': '#942392',  // Primary color - sesuai dengan theme colors
+        'primary-600': '#7C3AED',
+        'primary-700': '#6D28D9',
+        'primary-800': '#5B21B6',
+        'primary-900': '#4C1D95',
         secondary: {
           50: '#EFF6FF',
           100: '#DBEAFE',

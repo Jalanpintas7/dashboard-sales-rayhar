@@ -8,8 +8,7 @@
     destination_id: null,
     start_date: '',
     end_date: '',
-    price: '',
-    is_active: true
+    price: ''
   };
 
   let loading = false;
@@ -33,7 +32,6 @@
       const { data, error } = await supabase
         .from('destinations')
         .select('id, name, created_at')
-        .eq('is_active', true)
         .order('name');
 
       if (error) {
@@ -124,8 +122,7 @@
         destination_id: null,
         start_date: '',
         end_date: '',
-        price: '',
-        is_active: true
+        price: ''
       };
       selectedDestination = null;
       searchQuery = '';
@@ -155,6 +152,20 @@
     </div>
   {/if}
 
+  <!-- Warning jika tidak ada destinasi -->
+  {#if destinations.length === 0}
+    <div class="mb-4 p-3 rounded-lg bg-yellow-100 text-yellow-700 border border-yellow-200">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-sm font-medium">
+          Belum ada destinasi tersedia. Silakan tambahkan destinasi terlebih dahulu di card sebelah kiri.
+        </span>
+      </div>
+    </div>
+  {/if}
+
   <form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
     <!-- Tujuan Destinasi Dropdown -->
     <div class="relative">
@@ -170,15 +181,22 @@
             type="text"
             bind:value={searchQuery}
             on:input={handleSearchInput}
-            on:focus={() => isDropdownOpen = true}
+            on:focus={() => {
+              isDropdownOpen = true;
+              filterDestinations();
+            }}
+            on:click={() => {
+              isDropdownOpen = true;
+              filterDestinations();
+            }}
             placeholder="Cari destinasi..."
-            class="flex-1 px-3 py-2 sm:py-3 border-none outline-none bg-transparent"
+            class="flex-1 px-3 py-2 sm:py-3 border-none outline-none bg-transparent cursor-pointer"
             required
           />
           <button
             type="button"
             on:click={toggleDropdown}
-            class="px-3 py-2 sm:py-3 hover:bg-slate-50 transition-colors"
+            class="px-3 py-2 sm:py-2 sm:py-3 hover:bg-slate-50 transition-colors"
           >
             <ChevronDown class="w-4 h-4 text-slate-400 {isDropdownOpen ? 'rotate-180' : ''}" />
           </button>
@@ -187,9 +205,14 @@
         <!-- Dropdown Menu -->
         {#if isDropdownOpen}
           <div class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-            {#if filteredDestinations.length === 0}
+            
+            {#if destinations.length === 0}
               <div class="px-4 py-3 text-slate-500 text-sm">
-                Tidak ada destinasi ditemukan
+                Belum ada destinasi tersedia. Silakan tambahkan destinasi terlebih dahulu.
+              </div>
+            {:else if filteredDestinations.length === 0}
+              <div class="px-4 py-3 text-slate-500 text-sm">
+                Tidak ada destinasi yang cocok dengan pencarian
               </div>
             {:else}
               {#each filteredDestinations as destination}
@@ -199,7 +222,6 @@
                   class="w-full px-4 py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0"
                 >
                   <div class="font-medium text-slate-800">{destination.name}</div>
-                  <div class="text-sm text-slate-500">ID: {destination.id}</div>
                 </button>
               {/each}
             {/if}

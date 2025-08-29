@@ -1,6 +1,8 @@
 <script>
+  import { onMount } from 'svelte';
   import { formatCurrency, formatDate } from '$lib/umrah-data-helpers.js';
-  import { Edit, Eye, Trash2, ChevronLeft, ChevronRight } from 'lucide-svelte';
+  import { Edit, Eye, Trash2, ChevronLeft, ChevronRight, X, AlertTriangle, Calendar, Package, Globe, FileText, DollarSign, CheckCircle } from 'lucide-svelte';
+  import { supabase } from '$lib/supabase.js';
 
   export let seasons = [];
   export let categories = [];
@@ -13,6 +15,28 @@
   // Pagination state
   let currentPage = 1;
   const itemsPerPage = 10;
+
+  // Modal state
+  let showDetailModal = false;
+  let showEditModal = false;
+  let showDeleteModal = false;
+  let selectedItem = null;
+  let modalType = ''; // 'season', 'category', 'package'
+
+  // Edit form state
+  let editForm = {
+    name: '',
+    start_date: '',
+    end_date: '',
+    quintuple: '',
+    quadruple: '',
+    triple: '',
+    double: '',
+    sektor: '',
+    airline_id: '',
+    umrah_season_id: '',
+    umrah_category_id: ''
+  };
 
   // Computed values for pagination
   $: totalSeasons = seasons.length;
@@ -46,20 +70,60 @@
 
   // Function to handle edit
   function handleEdit(type, id) {
-    console.log(`Edit ${type} with id:`, id);
-    // TODO: Implement edit functionality
+    modalType = type;
+    if (type === 'season') {
+      selectedItem = seasons.find(s => s.id === id);
+      editForm = {
+        name: selectedItem.name
+      };
+    } else if (type === 'category') {
+      selectedItem = categories.find(c => c.id === id);
+      editForm = {
+        name: selectedItem.name
+      };
+         } else if (type === 'package') {
+       selectedItem = packages.find(p => p.id === id);
+       editForm = {
+         name: `${selectedItem.umrah_seasons?.name || ''} - ${selectedItem.umrah_categories?.name || ''}`,
+         start_date: selectedItem.start_date,
+         end_date: selectedItem.end_date,
+         quintuple: selectedItem.quintuple || '',
+         quadruple: selectedItem.quadruple || '',
+         triple: selectedItem.triple || '',
+         double: selectedItem.double || '',
+         sektor: selectedItem.sektor || '',
+         airline_id: selectedItem.airline_id || '',
+         umrah_season_id: selectedItem.umrah_season_id || '',
+         umrah_category_id: selectedItem.umrah_category_id || ''
+       };
+     }
+    showEditModal = true;
   }
 
   // Function to handle view
   function handleView(type, id) {
-    console.log(`View ${type} with id:`, id);
-    // TODO: Implement view functionality
+    modalType = type;
+    if (type === 'season') {
+      selectedItem = seasons.find(s => s.id === id);
+    } else if (type === 'category') {
+      selectedItem = categories.find(c => c.id === id);
+    } else if (type === 'package') {
+      selectedItem = packages.find(p => p.id === id);
+    }
+    showDetailModal = true;
   }
 
   // Function to handle delete
   function handleDelete(type, id) {
-    console.log(`Delete ${type} with id:`, id);
-    // TODO: Implement delete functionality
+    modalType = type;
+    if (type === 'season') {
+      selectedItem = seasons.find(s => s.id === id);
+    } else if (type === 'category') {
+      selectedItem = categories.find(c => c.id === id);
+    } else if (type === 'package') {
+      selectedItem = packages.find(p => p.id === id);
+    }
+    showDeleteModal = true;
   }
 
   // Pagination functions
@@ -116,6 +180,209 @@
     
     return pages;
   }
+
+  // Function to close modals
+  function closeModals() {
+    showDetailModal = false;
+    showEditModal = false;
+    showDeleteModal = false;
+    selectedItem = null;
+    modalType = '';
+         editForm = {
+       name: '',
+       is_active: true,
+       start_date: '',
+       end_date: '',
+       quintuple: '',
+       quadruple: '',
+       triple: '',
+       double: '',
+       sektor: '',
+       airline_id: '',
+       umrah_season_id: '',
+       umrah_category_id: ''
+     };
+  }
+
+  // Function to save edit
+  async function saveEdit() {
+    try {
+      // Set loading state
+      isLoading = true;
+      
+      let result;
+      
+      if (modalType === 'season') {
+        // Update umrah_seasons table
+        result = await supabase
+          .from('umrah_seasons')
+          .update({
+            name: editForm.name
+          })
+          .eq('id', selectedItem.id)
+          .select();
+          
+      } else if (modalType === 'category') {
+        // Update umrah_categories table
+        result = await supabase
+          .from('umrah_categories')
+          .update({
+            name: editForm.name
+          })
+          .eq('id', selectedItem.id)
+          .select();
+          
+             } else if (modalType === 'package') {
+         // Update umrah_dates table
+         result = await supabase
+           .from('umrah_dates')
+           .update({
+             start_date: editForm.start_date,
+             end_date: editForm.end_date,
+             sektor: editForm.sektor,
+             quintuple: editForm.quintuple ? parseFloat(editForm.quintuple) : null,
+             quadruple: editForm.quadruple ? parseFloat(editForm.quadruple) : null,
+             triple: editForm.triple ? parseFloat(editForm.triple) : null,
+             double: editForm.double ? parseFloat(editForm.double) : null
+           })
+           .eq('id', selectedItem.id)
+           .select();
+       }
+      
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+      
+      // Show success message
+      showToast('success', `${modalType === 'season' ? 'Musim' : modalType === 'category' ? 'Kategori' : 'Paket'} berhasil diperbarui!`);
+      
+      // Close modal after save
+      closeModals();
+      
+      // Refresh data by triggering a custom event
+      window.dispatchEvent(new CustomEvent('refreshUmrahData'));
+      
+    } catch (error) {
+      console.error('Error saving edit:', error);
+      showToast('error', `Gagal memperbarui data: ${error.message}`);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // Function to confirm delete
+  async function confirmDelete() {
+    try {
+      // Set loading state
+      isLoading = true;
+      
+      let result;
+      
+      if (modalType === 'season') {
+        // Check if season is used in other tables
+        const seasonUsage = await supabase
+          .from('umrah_dates')
+          .select('id')
+          .eq('umrah_season_id', selectedItem.id)
+          .limit(1);
+          
+        if (seasonUsage.data && seasonUsage.data.length > 0) {
+          throw new Error('Musim ini tidak dapat dihapus karena masih digunakan dalam paket umrah');
+        }
+        
+        // Delete from umrah_seasons table
+        result = await supabase
+          .from('umrah_seasons')
+          .delete()
+          .eq('id', selectedItem.id);
+          
+      } else if (modalType === 'category') {
+        // Check if category is used in other tables
+        const categoryUsage = await supabase
+          .from('umrah_dates')
+          .select('id')
+          .eq('umrah_category_id', selectedItem.id)
+          .limit(1);
+          
+        if (categoryUsage.data && categoryUsage.data.length > 0) {
+          throw new Error('Kategori ini tidak dapat dihapus karena masih digunakan dalam paket umrah');
+        }
+        
+        // Delete from umrah_categories table
+        result = await supabase
+          .from('umrah_categories')
+          .delete()
+          .eq('id', selectedItem.id);
+          
+      } else if (modalType === 'package') {
+        // Check if package is used in bookings
+        const packageUsage = await supabase
+          .from('bookings')
+          .select('id')
+          .eq('umrah_date_id', selectedItem.id)
+          .limit(1);
+          
+        if (packageUsage.data && packageUsage.data.length > 0) {
+          throw new Error('Paket ini tidak dapat dihapus karena masih digunakan dalam booking');
+        }
+        
+        // Delete from umrah_dates table
+        result = await supabase
+          .from('umrah_dates')
+          .delete()
+          .eq('id', selectedItem.id);
+      }
+      
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+      
+      // Show success message
+      showToast('success', `${modalType === 'season' ? 'Musim' : modalType === 'category' ? 'Kategori' : 'Paket'} berhasil dihapus!`);
+      
+      // Close modal after delete
+      closeModals();
+      
+      // Refresh data by triggering a custom event
+      window.dispatchEvent(new CustomEvent('refreshUmrahData'));
+      
+    } catch (error) {
+      console.error('Error deleting:', error);
+      showToast('error', `Gagal menghapus data: ${error.message}`);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // Toast notification system
+  let toastMessage = '';
+  let toastType = 'success';
+  let showToastNotification = false;
+
+  function showToast(type, message) {
+    toastType = type;
+    toastMessage = message;
+    showToastNotification = true;
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      showToastNotification = false;
+    }, 3000);
+  }
+
+  // Event listener for refresh data
+  onMount(() => {
+    const handleRefresh = () => {
+      // Trigger parent component to refresh data
+      window.dispatchEvent(new CustomEvent('refreshUmrahData'));
+    };
+    
+    window.addEventListener('refreshUmrahData', handleRefresh);
+    
+    return () => {
+      window.removeEventListener('refreshUmrahData', handleRefresh);
+    };
+  });
 </script>
 
 <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
@@ -188,7 +455,6 @@
             <thead class="bg-slate-50">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Musim</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
@@ -205,15 +471,10 @@
                       </div>
                       <div>
                         <div class="text-sm font-medium text-slate-900">{season.name}</div>
-                        <div class="text-sm text-slate-500">ID: {season.id}</div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full {season.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                      {season.is_active ? 'Aktif' : 'Non-Aktif'}
-                    </span>
-                  </td>
+
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                     {formatDate(season.created_at)}
                   </td>
@@ -292,7 +553,6 @@
             <thead class="bg-slate-50">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Kategori</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
@@ -309,15 +569,10 @@
                       </div>
                       <div>
                         <div class="text-sm font-medium text-slate-900">{category.name}</div>
-                        <div class="text-sm text-slate-500">ID: {category.id}</div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full {category.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                      {category.is_active ? 'Aktif' : 'Non-Aktif'}
-                    </span>
-                  </td>
+
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                     {formatDate(category.created_at)}
                   </td>
@@ -397,8 +652,7 @@
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Paket</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Periode</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga Double</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
@@ -417,7 +671,7 @@
                           {umrahPackage.umrah_seasons?.name || 'N/A'} - {umrahPackage.umrah_categories?.name || 'N/A'}
                         </div>
                         <div class="text-sm text-slate-500">
-                          {umrahPackage.airlines?.name || 'N/A'} • {umrahPackage.sektor || 'N/A'}
+                          {umrahPackage.airlines?.name || 'N/A'}
                         </div>
                       </div>
                     </div>
@@ -428,14 +682,10 @@
                       <div class="text-xs text-slate-400">s/d {formatDate(umrahPackage.end_date)}</div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                    {formatCurrency(umrahPackage.quintuple || umrahPackage.quadruple || umrahPackage.triple || umrahPackage.double)}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full {umrahPackage.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                      {umrahPackage.is_active ? 'Aktif' : 'Non-Aktif'}
-                    </span>
-                  </td>
+                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                     {formatCurrency(umrahPackage.double || 0)}
+                   </td>
+
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div class="flex space-x-2">
                       <button
@@ -506,3 +756,484 @@
     {/if}
   </div>
 </div>
+
+<!-- Modal Detail Data Umrah -->
+{#if showDetailModal && selectedItem}
+  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/50">
+      <!-- Header Modal -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center {modalType === 'season' ? 'bg-purple-100' : modalType === 'category' ? 'bg-yellow-100' : 'bg-green-100'}">
+            {#if modalType === 'season'}
+              <Calendar class="w-6 h-6 text-purple-600" />
+            {:else if modalType === 'category'}
+              <Package class="w-6 h-6 text-yellow-600" />
+            {:else}
+              <Globe class="w-6 h-6 text-green-600" />
+            {/if}
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              {#if modalType === 'season'}
+                {selectedItem.name}
+              {:else if modalType === 'category'}
+                {selectedItem.name}
+              {:else}
+                {selectedItem.umrah_seasons?.name || 'N/A'} - {selectedItem.umrah_categories?.name || 'N/A'}
+              {/if}
+            </h2>
+            <p class="text-gray-500">
+              Detail {modalType === 'season' ? 'Musim' : modalType === 'category' ? 'Kategori' : 'Paket'} Umrah
+            </p>
+          </div>
+        </div>
+        <button
+          on:click={closeModals}
+          class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X class="w-6 h-6 text-gray-500" />
+        </button>
+      </div>
+
+      <!-- Content Modal -->
+      <div class="p-6 space-y-6">
+        {#if modalType === 'season'}
+          <!-- Detail Musim -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Calendar class="w-5 h-5 text-purple-600" />
+                Informasi Musim
+              </h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Nama Musim</p>
+                  <p class="text-lg font-semibold text-gray-900">{selectedItem.name}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <FileText class="w-5 h-5 text-blue-600" />
+                Informasi Sistem
+              </h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Dibuat Pada</p>
+                  <p class="text-gray-900">{formatDate(selectedItem.created_at)}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Diperbarui Pada</p>
+                  <p class="text-gray-900">Belum pernah diperbarui</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {:else if modalType === 'category'}
+          <!-- Detail Kategori -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Package class="w-5 h-5 text-yellow-600" />
+                Informasi Kategori
+              </h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Nama Kategori</p>
+                  <p class="text-lg font-semibold text-gray-900">{selectedItem.name}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">ID</p>
+                  <p class="text-gray-900 font-mono">{selectedItem.id}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <FileText class="w-5 h-5 text-blue-600" />
+                Informasi Sistem
+              </h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Dibuat Pada</p>
+                  <p class="text-gray-900">{formatDate(selectedItem.created_at)}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Diperbarui Pada</p>
+                  <p class="text-gray-900">Belum pernah diperbarui</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {:else}
+          <!-- Detail Paket -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Globe class="w-5 h-5 text-green-600" />
+                Informasi Paket
+              </h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Nama Paket</p>
+                  <p class="text-lg font-semibold text-gray-900">
+                    {selectedItem.umrah_seasons?.name || 'N/A'} - {selectedItem.umrah_categories?.name || 'N/A'}
+                  </p>
+                </div>
+                
+
+                
+                <div>
+                  <p class="text-sm text-gray-500">Sektor</p>
+                  <p class="text-gray-900">{selectedItem.sektor || 'N/A'}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Maskapai</p>
+                  <p class="text-gray-900">{selectedItem.airlines?.name || 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Calendar class="w-5 h-5 text-blue-600" />
+                Periode Perjalanan
+              </h3>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Tanggal Mulai</p>
+                  <p class="text-gray-900">{formatDate(selectedItem.start_date)}</p>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-500">Tanggal Selesai</p>
+                  <p class="text-gray-900">{formatDate(selectedItem.end_date)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+                                <!-- Harga Paket -->
+           <div class="space-y-4">
+             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+               <DollarSign class="w-5 h-5 text-green-600" />
+               Harga Paket
+             </h3>
+             
+             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+               {#if selectedItem.quintuple}
+                 <div class="bg-green-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">Quintuple</p>
+                   <p class="text-lg font-semibold text-green-700">{formatCurrency(selectedItem.quintuple)}</p>
+                 </div>
+               {/if}
+               
+               {#if selectedItem.quadruple}
+                 <div class="bg-blue-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">Quadruple</p>
+                   <p class="text-lg font-semibold text-blue-700">{formatCurrency(selectedItem.quadruple)}</p>
+                 </div>
+               {/if}
+               
+               {#if selectedItem.triple}
+                 <div class="bg-yellow-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">Triple</p>
+                   <p class="text-lg font-semibold text-yellow-700">{formatCurrency(selectedItem.triple)}</p>
+                 </div>
+               {/if}
+               
+               {#if selectedItem.double}
+                 <div class="bg-purple-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">Double</p>
+                   <p class="text-lg font-semibold text-purple-700">{formatCurrency(selectedItem.double)}</p>
+                 </div>
+               {/if}
+             </div>
+           </div>
+        {/if}
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="flex justify-end gap-3 p-6 border-t border-gray-200">
+        <button
+          on:click={closeModals}
+          class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Toast Notification -->
+{#if showToastNotification}
+  <div class="fixed top-4 right-4 z-[60] transition-all duration-300 ease-in-out">
+    <div class="flex items-center gap-3 p-4 rounded-lg shadow-lg border {toastType === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}">
+      {#if toastType === 'success'}
+        <CheckCircle class="w-5 h-5 text-green-600" />
+      {:else}
+        <AlertTriangle class="w-5 h-5 text-red-600" />
+      {/if}
+      <span class="font-medium">{toastMessage}</span>
+      <button
+        on:click={() => showToastNotification = false}
+        class="ml-2 p-1 rounded-full hover:bg-white/20 transition-colors"
+      >
+        <X class="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+{/if}
+
+<!-- Modal Edit Data Umrah -->
+{#if showEditModal && selectedItem}
+  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/50">
+      <!-- Header Modal -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center {modalType === 'season' ? 'bg-purple-100' : modalType === 'category' ? 'bg-yellow-100' : 'bg-green-100'}">
+            {#if modalType === 'season'}
+              <Calendar class="w-6 h-6 text-purple-600" />
+            {:else if modalType === 'category'}
+              <Package class="w-6 h-6 text-yellow-600" />
+            {:else}
+              <Globe class="w-6 h-6 text-green-600" />
+            {/if}
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              Edit {modalType === 'season' ? 'Musim' : modalType === 'category' ? 'Kategori' : 'Paket'} Umrah
+            </h2>
+            <p class="text-gray-500">
+              Perbarui informasi {modalType === 'season' ? 'musim' : modalType === 'category' ? 'kategori' : 'paket'}
+            </p>
+          </div>
+        </div>
+        <button
+          on:click={closeModals}
+          class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X class="w-6 h-6 text-gray-500" />
+        </button>
+      </div>
+
+      <!-- Content Modal -->
+      <div class="p-6 space-y-6">
+        <form on:submit|preventDefault={saveEdit} class="space-y-6">
+          {#if modalType === 'season' || modalType === 'category'}
+            <!-- Form untuk Musim dan Kategori -->
+            <div class="space-y-4">
+              <div>
+                <label for="editName" class="block text-sm font-medium text-gray-700 mb-2">
+                  Nama {modalType === 'season' ? 'Musim' : 'Kategori'}
+                </label>
+                <input
+                  id="editName"
+                  type="text"
+                  bind:value={editForm.name}
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder={`Masukkan nama ${modalType === 'season' ? 'musim' : 'kategori'}`}
+                />
+              </div>
+              
+
+            </div>
+
+          {:else}
+            <!-- Form untuk Paket -->
+            <div class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="editStartDate" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tanggal Mulai
+                  </label>
+                  <input
+                    id="editStartDate"
+                    type="date"
+                    bind:value={editForm.start_date}
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label for="editEndDate" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tanggal Selesai
+                  </label>
+                  <input
+                    id="editEndDate"
+                    type="date"
+                    bind:value={editForm.end_date}
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label for="editSektor" class="block text-sm font-medium text-gray-700 mb-2">
+                  Sektor
+                </label>
+                <input
+                  id="editSektor"
+                  type="text"
+                  bind:value={editForm.sektor}
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Masukkan sektor"
+                />
+              </div>
+              
+                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                 <div>
+                   <label for="editQuintuple" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga Quintuple
+                   </label>
+                   <input
+                     id="editQuintuple"
+                     type="number"
+                     bind:value={editForm.quintuple}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+                 
+                 <div>
+                   <label for="editQuadruple" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga Quadruple
+                   </label>
+                   <input
+                     id="editQuadruple"
+                     type="number"
+                     bind:value={editForm.quadruple}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+                 
+                 <div>
+                   <label for="editTriple" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga Triple
+                   </label>
+                   <input
+                     id="editTriple"
+                     type="number"
+                     bind:value={editForm.triple}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+                 
+                 <div>
+                   <label for="editDouble" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga Double
+                   </label>
+                   <input
+                     id="editDouble"
+                     type="number"
+                     bind:value={editForm.double}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+               </div>
+              
+
+            </div>
+          {/if}
+        </form>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="flex justify-end gap-3 p-6 border-t border-gray-200">
+        <button
+          on:click={closeModals}
+          class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Batal
+        </button>
+        <button
+          on:click={saveEdit}
+          disabled={isLoading}
+          class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-400 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          {#if isLoading}
+            <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Menyimpan...
+          {:else}
+            Simpan Perubahan
+          {/if}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Modal Konfirmasi Hapus -->
+{#if showDeleteModal && selectedItem}
+  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full border border-white/50">
+      <!-- Header Modal -->
+      <div class="flex items-center justify-center p-6 border-b border-gray-200">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+          <AlertTriangle class="w-8 h-8 text-red-600" />
+        </div>
+      </div>
+
+      <!-- Content Modal -->
+      <div class="p-6 text-center">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          Konfirmasi Hapus
+        </h3>
+        <p class="text-gray-500 mb-6">
+          Apakah Anda yakin ingin menghapus {modalType === 'season' ? 'musim' : modalType === 'category' ? 'kategori' : 'paket'} 
+          <span class="font-semibold text-gray-900">
+            "{#if modalType === 'season' || modalType === 'category'}{selectedItem.name}{:else}{selectedItem.umrah_seasons?.name || 'N/A'} - {selectedItem.umrah_categories?.name || 'N/A'}{/if}"
+          </span>?
+        </p>
+        <p class="text-sm text-red-600 mb-6">
+          Tindakan ini tidak dapat dibatalkan dan akan menghapus data secara permanen.
+        </p>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="flex justify-end gap-3 p-6 border-t border-gray-200">
+        <button
+          on:click={closeModals}
+          class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Batal
+        </button>
+        <button
+          on:click={confirmDelete}
+          disabled={isLoading}
+          class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:bg-red-400 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          {#if isLoading}
+            <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Menghapus...
+          {:else}
+            Hapus
+          {/if}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}

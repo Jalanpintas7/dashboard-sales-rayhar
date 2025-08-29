@@ -112,33 +112,7 @@
         </div>
       </div>
       
-      <!-- Menu Items -->
-      <div class="py-2">
-        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-          <User class="w-4 h-4 mr-3" style="color: {themeColors.primary};" />
-          Profile
-        </a>
-        
-        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-          <Settings class="w-4 h-4 mr-3" style="color: {themeColors.primary};" />
-          Settings
-        </a>
-        
-        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-          <CreditCard class="w-4 h-4 mr-3" style="color: {themeColors.primary};" />
-          Billing
-        </a>
-        
-        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-          <Activity class="w-4 h-4 mr-3" style="color: {themeColors.primary};" />
-          Activity
-        </a>
-        
-        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-          <HelpCircle class="w-4 h-4 mr-3" style="color: {themeColors.primary};" />
-          Help
-        </a>
-      </div>
+
       
       <!-- Logout Button -->
       <div class="px-4 py-3 border-t border-gray-200">

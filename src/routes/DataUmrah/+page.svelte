@@ -1,9 +1,10 @@
 <script>
+  import { onMount } from 'svelte';
   import FilteredUmrahData from '$lib/components/FilteredUmrahData.svelte';
   import RoleGuard from '$lib/components/RoleGuard.svelte';
   import { user, loading } from '$lib/stores/auth.js';
   import { goto } from '$app/navigation';
-  import { Search, X, Heart, RefreshCw } from 'lucide-svelte';
+  import { Search } from 'lucide-svelte';
   import { 
     fetchUmrahSeasons, 
     fetchUmrahCategories, 
@@ -15,11 +16,15 @@
     goto('/login');
   }
 
-  // State untuk pencarian dan filter
-  let searchMusim = '';
-  let filterStatus = '';
+  // State untuk pencarian
+  let searchTerm = '';
   
-  // State untuk data yang difilter
+  // State untuk data asli (tidak difilter)
+  let allSeasons = [];
+  let allCategories = [];
+  let allPackages = [];
+  
+  // State untuk data yang difilter (realtime)
   let filteredSeasons = [];
   let filteredCategories = [];
   let filteredPackages = [];
@@ -28,7 +33,7 @@
   let isLoading = false;
 
   // Load data awal
-  async function loadFilteredData() {
+  async function loadData() {
     isLoading = true;
     try {
       const [seasonsData, categoriesData, packagesData] = await Promise.all([
@@ -37,60 +42,62 @@
         fetchUmrahPackages()
       ]);
 
-      // Apply filters
-      applyFilters(seasonsData, categoriesData, packagesData);
+      // Simpan data asli
+      allSeasons = seasonsData;
+      allCategories = categoriesData;
+      allPackages = packagesData;
     } catch (error) {
-      console.error('Error loading filtered data:', error);
+      console.error('Error loading data:', error);
     } finally {
       isLoading = false;
     }
   }
 
-  // Apply filters to data
-  function applyFilters(seasons, categories, packages) {
+  // Reactive filtering - data akan difilter secara otomatis saat searchTerm berubah
+  $: {
     // Filter seasons
-    filteredSeasons = seasons.filter(season => {
-      const matchesSearch = !searchMusim || 
-        season.name.toLowerCase().includes(searchMusim.toLowerCase());
-      const matchesStatus = !filterStatus || 
-        (filterStatus === 'aktif' && season.is_active) ||
-        (filterStatus === 'nonaktif' && !season.is_active);
+    filteredSeasons = allSeasons.filter(season => {
+      const matchesSearch = !searchTerm || 
+        season.name.toLowerCase().includes(searchTerm.toLowerCase());
       
-      return matchesSearch && matchesStatus;
+      return matchesSearch;
     });
 
     // Filter categories
-    filteredCategories = categories.filter(category => {
-      const matchesStatus = !filterStatus || 
-        (filterStatus === 'aktif' && category.is_active) ||
-        (filterStatus === 'nonaktif' && !category.is_active);
+    filteredCategories = allCategories.filter(category => {
+      const matchesSearch = !searchTerm || 
+        category.name.toLowerCase().includes(searchTerm.toLowerCase());
       
-      return matchesStatus;
+      return matchesSearch;
     });
 
     // Filter packages
-    filteredPackages = packages.filter(umrahPackage => {
-      const matchesStatus = !filterStatus || 
-        (filterStatus === 'aktif' && umrahPackage.is_active) ||
-        (filterStatus === 'nonaktif' && !umrahPackage.is_active);
+    filteredPackages = allPackages.filter(umrahPackage => {
+      const matchesSearch = !searchTerm || 
+        (umrahPackage.umrah_seasons?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         umrahPackage.umrah_categories?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         umrahPackage.airlines?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         umrahPackage.sektor?.toLowerCase().includes(searchTerm.toLowerCase()));
       
-      return matchesStatus;
+      return matchesSearch;
     });
   }
 
-  // Handle search and filter changes
-  function handleSearch() {
-    loadFilteredData();
-  }
-
-  function handleReset() {
-    searchMusim = '';
-    filterStatus = '';
-    loadFilteredData();
-  }
-
   // Load data on mount
-  loadFilteredData();
+  loadData();
+
+  // Event listener for refresh data from child component
+  onMount(() => {
+    const handleRefresh = () => {
+      loadData();
+    };
+    
+    window.addEventListener('refreshUmrahData', handleRefresh);
+    
+    return () => {
+      window.removeEventListener('refreshUmrahData', handleRefresh);
+    };
+  });
 </script>
 
 <RoleGuard allowedRoles={['super_admin']} redirectTo="/login">
@@ -104,73 +111,32 @@
     <!-- Data Table dengan Pencarian -->
     <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
      
-
       <!-- Menu Pencarian dan Filter -->
       <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Search by Musim -->
+        <div class="grid grid-cols-1 gap-4">
+          <!-- Search Input -->
           <div>
-            <label for="searchMusim" class="block text-sm font-medium text-slate-700 mb-2">Cari Musim</label>
+            <label for="searchTerm" class="block text-sm font-medium text-slate-700 mb-2">Cari Data</label>
             <div class="relative">
               <Search class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
-                id="searchMusim"
+                id="searchTerm"
                 type="text"
-                bind:value={searchMusim}
-                placeholder="Cari musim umrah..."
+                bind:value={searchTerm}
+                placeholder="Cari musim, kategori, atau paket umrah..."
                 class="w-full pl-12 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               />
             </div>
           </div>
 
 
-
-          <!-- Filter by Status -->
-          <div>
-            <label for="filterStatus" class="block text-sm font-medium text-slate-700 mb-2">Status</label>
-            <select
-              id="filterStatus"
-              bind:value={filterStatus}
-              class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-            >
-              <option value="">Semua Status</option>
-              <option value="aktif">Aktif</option>
-              <option value="nonaktif">Non-Aktif</option>
-            </select>
-          </div>
-
-
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-3 mt-4">
-          <button 
-            on:click={handleSearch}
-            disabled={isLoading}
-            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-xl transition-colors duration-200"
-          >
-            {#if isLoading}
-              <RefreshCw class="w-4 h-4 animate-spin" />
-            {:else}
-              <Search class="w-4 h-4" />
-            {/if}
-            {isLoading ? 'Mencari...' : 'Cari Data'}
-          </button>
-          <button 
-            on:click={handleReset}
-            disabled={isLoading}
-            class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-50 text-slate-700 px-4 py-2 rounded-xl transition-colors duration-200"
-          >
-            <X class="w-4 h-4" />
-            Reset
-          </button>
         </div>
 
         <!-- Hasil Pencarian -->
         {#if isLoading}
           <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
             <div class="flex items-center gap-3">
-              <RefreshCw class="w-4 h-4 text-blue-600 animate-spin" />
+              <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               <p class="text-blue-800 text-sm">Memuat data...</p>
             </div>
           </div>

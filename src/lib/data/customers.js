@@ -10,7 +10,6 @@ export const customersData = [
     branch: 'Kuala Lumpur',
     package: 'Umrah',
     category: 'Umrah Premium 14 Hari (Makkah - Madinah)',
-    status: 'Confirmed',
     price: 'RM 8,500.00',
     date: '20 Ogos 2025',
     avatar: 'AZ'
@@ -23,7 +22,6 @@ export const customersData = [
     branch: 'Johor Bahru',
     package: 'Pelancongan',
     category: 'Turkey Explorer 7 Hari (Istanbul - Cappadocia)',
-    status: 'Pending',
     price: 'RM 4,200.00',
     date: '19 Ogos 2025',
     avatar: 'SA'
@@ -36,7 +34,6 @@ export const customersData = [
     branch: 'Penang',
     package: 'Umrah',
     category: 'Umrah Ekonomi 10 Hari (Makkah - Madinah)',
-    status: 'Confirmed',
     price: 'RM 6,800.00',
     date: '18 Ogos 2025',
     avatar: 'MA'
@@ -49,7 +46,6 @@ export const customersData = [
     branch: 'Kuala Lumpur',
     package: 'Pelancongan',
     category: 'UAE Luxury 5 Hari (Dubai - Abu Dhabi)',
-    status: 'Cancelled',
     price: 'RM 3,500.00',
     date: '17 Ogos 2025',
     avatar: 'FZ'
@@ -62,7 +58,6 @@ export const customersData = [
     branch: 'Kota Kinabalu',
     package: 'Umrah',
     category: 'Umrah Plus 12 Hari (Makkah - Madinah)',
-    status: 'Pending',
     price: 'RM 7,200.00',
     date: '16 Ogos 2025',
     avatar: 'HI'
@@ -75,7 +70,6 @@ export const customersData = [
     branch: 'Shah Alam',
     package: 'Pelancongan',
     category: 'Japan Cherry Blossom 8 Hari (Tokyo - Kyoto)',
-    status: 'Confirmed',
     price: 'RM 5,800.00',
     date: '15 Ogos 2025',
     avatar: 'NA'
@@ -88,7 +82,6 @@ export const customersData = [
     branch: 'Melaka',
     package: 'Umrah',
     category: 'Umrah Standard 9 Hari (Makkah - Madinah)',
-    status: 'Confirmed',
     price: 'RM 5,500.00',
     date: '14 Ogos 2025',
     avatar: 'KA'
@@ -101,7 +94,6 @@ export const customersData = [
     branch: 'Ipoh',
     package: 'Pelancongan',
     category: 'Singapore-Malaysia 4 Hari (Singapore - KL)',
-    status: 'Pending',
     price: 'RM 2,800.00',
     date: '13 Ogos 2025',
     avatar: 'AK'
@@ -112,20 +104,6 @@ export const customersData = [
 export function getInitials(name) {
   if (!name) return 'NA';
   return name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
-}
-
-// Fungsi untuk mendapatkan warna status
-export function getStatusColor(status) {
-  switch (status?.toLowerCase()) {
-    case 'confirmed':
-      return 'bg-green-100 text-green-800 border-green-200';
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'cancelled':
-      return 'bg-red-100 text-red-800 border-red-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
 }
 
 // Fungsi untuk mendapatkan warna package
@@ -143,7 +121,6 @@ export function getPackageColor(packageType) {
 // Fungsi untuk filter data
 export function filterCustomers(customers, filters) {
   return customers.filter(customer => {
-    if (filters.status && customer.status !== filters.status) return false;
     if (filters.package && customer.package !== filters.package) return false;
     if (filters.branch && customer.branch !== filters.branch) return false;
     if (filters.search) {
@@ -175,8 +152,9 @@ export async function fetchCustomersData() {
         negeri,
         bandar,
         bilangan,
-        status,
         jenis_pelancongan,
+        age,
+        birth_date,
         created_at,
         branches(name),
         destinations(name),
@@ -213,6 +191,16 @@ export async function fetchCustomersData() {
         seasonDestination = booking.destinations?.name || '-';
       }
 
+      // Format tanggal lahir
+      let formattedBirthDate = '-';
+      if (booking.birth_date) {
+        formattedBirthDate = new Date(booking.birth_date).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+
       return {
         id: booking.id,
         name: `${booking.gelaran || ''} ${booking.nama}`.trim(),
@@ -221,7 +209,6 @@ export async function fetchCustomersData() {
         branch: booking.branches?.name || '-',
         package: booking.package_types?.name || (isUmrah ? 'Umrah' : 'Pelancongan'),
         category: seasonDestination,
-        status: booking.status || 'pending',
         price: booking.bilangan ? `${booking.bilangan} pax` : '-',
         date: new Date(booking.created_at).toLocaleDateString('id-ID', {
           day: 'numeric',
@@ -233,6 +220,8 @@ export async function fetchCustomersData() {
         address: `${booking.alamat || ''}, ${booking.poskod || ''} ${booking.bandar || ''}, ${booking.negeri || ''}`.replace(/^[, ]+|[, ]+$/g, ''),
         nokp: booking.nokp,
         jenis_pelancongan: booking.jenis_pelancongan,
+        age: booking.age || '-',
+        birth_date: formattedBirthDate,
         // Tambahkan field khusus untuk musim/destinasi
         seasonDestination: seasonDestination
       };

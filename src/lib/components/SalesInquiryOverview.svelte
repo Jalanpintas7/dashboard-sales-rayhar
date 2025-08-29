@@ -253,8 +253,8 @@
             <div class="w-44 h-[420px] rounded-2xl overflow-hidden shadow-md flex flex-col">
               {#if bar.pelancongan.percentage > 0}
                 <div 
-                  class="bg-gradient-to-b from-[#942392] to-[#942392]/80 flex items-center justify-center"
-                  style="height: {(bar.pelancongan.percentage / 100) * 420}px;"
+                  class="flex items-center justify-center"
+                  style="height: {(bar.pelancongan.percentage / 100) * 420}px; background: linear-gradient(to bottom, var(--color-primary), rgba(148, 35, 146, 0.8));"
                 >
                   <span class="text-white text-sm font-semibold">Pelancongan</span>
                 </div>
@@ -274,7 +274,7 @@
               {/if}
             </div>
             <div class="mt-4 flex gap-3">
-              <span class="rounded-full bg-[#942392]/20 text-[#942392] text-xs font-semibold px-3 py-1 shadow-sm">{bar.pelancongan.percentage}%</span>
+              <span class="rounded-full text-xs font-semibold px-3 py-1 shadow-sm" style="background-color: rgba(148, 35, 146, 0.2); color: var(--color-primary);">{bar.pelancongan.percentage}%</span>
               <span class="rounded-full bg-[#FFF212]/20 text-black text-xs font-semibold px-3 py-1 shadow-sm">{bar.umrah.percentage}%</span>
             </div>
             <span class="mt-3 rounded-full bg-slate-100 text-slate-600 text-xs font-medium px-3 py-1">{bar.date}</span>

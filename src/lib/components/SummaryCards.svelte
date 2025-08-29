@@ -21,8 +21,8 @@
       change: '+0%',
       subtitle: 'dari 30 hari',
       icon: 'person',
-      bgColor: 'bg-[#8E24AA]',
-      shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+      bgColor: 'bg-primary',
+      shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
     },
     {
       title: 'Bookings Umrah',
@@ -30,8 +30,8 @@
       change: '+0%',
       subtitle: 'dari total',
       icon: 'location',
-      bgColor: 'bg-[#8E24AA]',
-      shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+      bgColor: 'bg-primary',
+      shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
     },
     {
       title: 'Bookings Outbound',
@@ -39,8 +39,8 @@
       change: '+0%',
       subtitle: 'dari total',
       icon: 'airplane',
-      bgColor: 'bg-[#8E24AA]',
-      shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+      bgColor: 'bg-primary',
+      shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
     },
     {
       title: 'Total Leads',
@@ -48,8 +48,8 @@
       change: '+0%',
       subtitle: 'dari 30 hari',
       icon: 'trending-up',
-      bgColor: 'bg-[#8E24AA]',
-      shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+      bgColor: 'bg-primary',
+      shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
     }
   ];
   
@@ -142,8 +142,8 @@
           change: `+${safeStats.recentBookings}`,
           subtitle: 'dari 30 hari',
           icon: 'person',
-          bgColor: 'bg-[#8E24AA]',
-          shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+          bgColor: 'bg-primary',
+          shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
         },
         {
           title: 'Bookings Umrah',
@@ -151,8 +151,8 @@
           change: `${umrahPercentage}%`,
           subtitle: 'dari total',
           icon: 'location',
-          bgColor: 'bg-[#8E24AA]',
-          shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+          bgColor: 'bg-primary',
+          shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
         },
         {
           title: 'Bookings Outbound',
@@ -160,7 +160,7 @@
           change: `${outboundPercentage}%`,
           subtitle: 'dari total',
           icon: 'airplane',
-          bgColor: 'bg-[#8E24AA]',
+          bgColor: 'bg-primary',
           shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
         },
         {
@@ -169,8 +169,8 @@
           change: `+${safeStats.recentLeads}`,
           subtitle: 'dari 30 hari',
           icon: 'trending-up',
-          bgColor: 'bg-[#8E24AA]',
-          shadowColor: 'shadow-[0_6px_16px_rgba(142,36,170,0.35)]'
+          bgColor: 'bg-primary',
+          shadowColor: 'shadow-[0_6px_16px_rgba(148,35,146,0.35)]'
         }
       ];
       
@@ -250,7 +250,7 @@
 
         <!-- Right Graphic -->
         <div class="relative flex items-center justify-center h-full">
-          <div class="w-8 h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-xl lg:rounded-2xl {card.bgColor} flex items-center justify-center shadow-soft backdrop-blur-sm">
+          <div class="w-8 h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-soft backdrop-blur-sm" style="background-color: var(--color-primary);">
             {#if card.icon === 'person'}
               <Users class="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
             {:else if card.icon === 'location'}
@@ -264,7 +264,7 @@
         </div>
 
         <!-- Lingkaran dekor pinggir kanan (opsional, meniru nuansa halus) -->
-        <div class="pointer-events-none absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 h-12 w-12 lg:h-16 lg:w-16 rounded-full bg-purple-500/10 blur-xl"></div>
+        <div class="pointer-events-none absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 h-12 w-12 lg:h-16 lg:w-16 rounded-full blur-xl" style="background-color: rgba(148, 35, 146, 0.1);"></div>
       </div>
     {/each}
   </div>

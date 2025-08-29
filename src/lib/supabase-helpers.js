@@ -7,7 +7,6 @@ export const getBranches = async () => {
   const { data, error } = await supabase
     .from('branches')
     .select('*')
-    .eq('is_active', true)
     .order('name')
   
   if (error) throw error
@@ -40,7 +39,6 @@ export const getUmrahSeasons = async () => {
   const { data, error } = await supabase
     .from('umrah_seasons')
     .select('*')
-    .eq('is_active', true)
     .order('name')
   
   if (error) throw error
@@ -62,7 +60,6 @@ export const getUmrahCategories = async () => {
   const { data, error } = await supabase
     .from('umrah_categories')
     .select('*')
-    .eq('is_active', true)
     .order('name')
   
   if (error) throw error
@@ -138,7 +135,6 @@ export const getPackageTypes = async () => {
   const { data, error } = await supabase
     .from('package_types')
     .select('*')
-    .eq('is_active', true)
     .order('name')
   
   if (error) throw error
@@ -150,7 +146,6 @@ export const getAirlines = async () => {
   const { data, error } = await supabase
     .from('airlines')
     .select('*')
-    .eq('is_active', true)
     .order('name')
   
   if (error) throw error

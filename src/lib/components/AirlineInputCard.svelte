@@ -1,19 +1,17 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { supabase } from '$lib/supabase.js';
-  import { Plus, Plane } from 'lucide-svelte';
 
   const dispatch = createEventDispatcher();
 
   let airlineName = '';
-  let airlineCode = '';
   let loading = false;
   let message = '';
   let messageType = '';
 
   async function handleSubmit() {
-    if (!airlineName.trim() || !airlineCode.trim()) {
-      message = 'Mohon isi semua field yang diperlukan';
+    if (!airlineName.trim()) {
+      message = 'Mohon isi nama airline';
       messageType = 'error';
       return;
     }
@@ -26,8 +24,7 @@
         .from('airlines')
         .insert([
           {
-            name: airlineName.trim(),
-            code: airlineCode.trim().toUpperCase()
+            name: airlineName.trim()
           }
         ])
         .select();
@@ -39,7 +36,6 @@
       
       // Reset form
       airlineName = '';
-      airlineCode = '';
       
       // Dispatch event untuk refresh data
       dispatch('airlineAdded', data[0]);
@@ -58,7 +54,9 @@
   <!-- Header dengan ikon -->
   <div class="flex items-center gap-3 mb-4 sm:mb-6">
     <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-      <Plane class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600">
+        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-1.5 0-2 1-2 1l-3.5 3.5L7.2 6.2C6.4 6 6 6.6 6.8 7.4L11 12l-7.8 1.8c-.8.2-.4.8.4.6L12 13l3.5 3.5c.8.8 1.4.4 1.2-.4L17.8 19.2Z"/>
+      </svg>
     </div>
     <h2 class="text-lg sm:text-xl font-bold text-slate-800">Input Airline</h2>
   </div>
@@ -73,34 +71,17 @@
   <form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
     <div>
       <label for="airlineName" class="block text-sm font-medium text-slate-700 mb-2">
-        Nama Airline
+        Nama Airline *
       </label>
       <input
         id="airlineName"
         type="text"
         bind:value={airlineName}
-        placeholder="Contoh: Garuda Indonesia"
+        placeholder="Contoh: Garuda Indonesia, Saudi Airlines, Emirates"
         class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
         required
       />
     </div>
-
-    <div>
-      <label for="airlineCode" class="block text-sm font-medium text-slate-700 mb-2">
-        Kode Airline
-      </label>
-      <input
-        id="airlineCode"
-        type="text"
-        bind:value={airlineCode}
-        placeholder="Contoh: GA"
-        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 uppercase"
-        required
-        maxlength="3"
-      />
-    </div>
-
-
 
     <button
       type="submit"

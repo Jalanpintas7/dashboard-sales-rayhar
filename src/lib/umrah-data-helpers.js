@@ -70,8 +70,7 @@ export async function getPackageCountBySeason() {
   try {
     const { data, error } = await supabase
       .from('umrah_dates')
-      .select('umrah_season_id')
-      .eq('is_active', true);
+      .select('umrah_season_id');
 
     if (error) {
       console.error('Error counting packages by season:', error);
@@ -97,8 +96,7 @@ export async function getPackageCountByCategory() {
   try {
     const { data, error } = await supabase
       .from('umrah_dates')
-      .select('umrah_category_id')
-      .eq('is_active', true);
+      .select('umrah_category_id');
 
     if (error) {
       console.error('Error counting packages by category:', error);

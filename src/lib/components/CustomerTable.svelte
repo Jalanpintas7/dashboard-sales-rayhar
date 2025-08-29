@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { fetchCustomersData, getInitials, getStatusColor, getPackageColor } from '$lib/data/customers.js';
+  import { fetchCustomersData, getInitials, getPackageColor } from '$lib/data/customers.js';
   import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText, ChevronLeft, ChevronRight } from 'lucide-svelte';
   
   // State untuk data
@@ -14,7 +14,6 @@
   
   // State untuk filter
   let searchTerm = '';
-  let statusFilter = '';
   let packageFilter = '';
   let branchFilter = '';
   
@@ -43,7 +42,6 @@
         return false;
       }
     }
-    if (statusFilter && customer.status !== statusFilter) return false;
     if (packageFilter && customer.package !== packageFilter) return false;
     if (branchFilter && customer.branch !== branchFilter) return false;
     return true;
@@ -115,7 +113,6 @@
   // Fungsi untuk reset filter
   function resetFilters() {
     searchTerm = '';
-    statusFilter = '';
     packageFilter = '';
     branchFilter = '';
     currentPage = 1;
@@ -134,12 +131,11 @@
   }
   
   // Dapatkan daftar unik untuk filter
-  $: uniqueStatuses = [...new Set(customersData.map(c => c.status))];
   $: uniquePackages = [...new Set(customersData.map(c => c.package))];
   $: uniqueBranches = [...new Set(customersData.map(c => c.branch))];
   
   // Reset currentPage ketika filter berubah
-  $: if (searchTerm || statusFilter || packageFilter || branchFilter) {
+  $: if (searchTerm || packageFilter || branchFilter) {
     currentPage = 1;
   }
 </script>
@@ -161,17 +157,6 @@
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
       </div>
-      
-      <!-- Status Filter -->
-      <select
-        bind:value={statusFilter}
-        class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-      >
-        <option value="">Semua Status</option>
-        {#each uniqueStatuses as status}
-          <option value={status}>{status}</option>
-        {/each}
-      </select>
       
       <!-- Package Filter -->
       <select
@@ -254,9 +239,6 @@
              MUSIM/DESTINASI
             </th>
             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              STATUS
-            </th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               TARIKH
             </th>
           </tr>
@@ -295,13 +277,6 @@
               <!-- Kolom DESTINASI -->
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">{customer.seasonDestination || customer.category || '-'}</div>
-              </td>
-              
-              <!-- Kolom STATUS -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {getStatusColor(customer.status)}">
-                  {customer.status}
-                </span>
               </td>
               
               <!-- Kolom TARIKH -->
@@ -419,6 +394,26 @@
                 </div>
               {/if}
               
+              {#if selectedCustomer.age && selectedCustomer.age !== '-'}
+                <div class="flex items-center gap-3">
+                  <User class="w-4 h-4 text-gray-400" />
+                  <div>
+                    <p class="text-sm text-gray-500">Umur</p>
+                    <p class="text-gray-900">{selectedCustomer.age} tahun</p>
+                  </div>
+                </div>
+              {/if}
+              
+              {#if selectedCustomer.birth_date && selectedCustomer.birth_date !== '-'}
+                <div class="flex items-center gap-3">
+                  <Calendar class="w-4 h-4 text-gray-400" />
+                  <div>
+                    <p class="text-sm text-gray-500">Tanggal Lahir</p>
+                    <p class="text-gray-900">{selectedCustomer.birth_date}</p>
+                  </div>
+                </div>
+              {/if}
+              
               {#if selectedCustomer.address && selectedCustomer.address !== '-'}
                 <div class="flex items-start gap-3">
                   <MapPin class="w-4 h-4 text-gray-400 mt-1" />
@@ -476,22 +471,15 @@
           </div>
         </div>
 
-        <!-- Status dan Harga -->
+        <!-- Harga dan Informasi Tambahan -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <FileText class="w-5 h-5 text-green-600" />
-              Status & Harga
+              Harga
             </h3>
             
             <div class="space-y-3">
-              <div>
-                <p class="text-sm text-gray-500">Status</p>
-                <span class="inline-flex px-3 py-1 rounded-full text-sm font-medium {getStatusColor(selectedCustomer.status)}">
-                  {selectedCustomer.status}
-                </span>
-              </div>
-              
               {#if selectedCustomer.price && selectedCustomer.price !== '-'}
                 <div>
                   <p class="text-sm text-gray-500">Harga/Bilangan</p>

@@ -6,8 +6,7 @@
   // State untuk form input destinasi
   let destinationData = {
     name: '',
-    sales_consultant_id: null,
-    is_active: true
+    sales_consultant_id: null
   };
 
   let loading = false;
@@ -91,8 +90,7 @@
         .insert([
           {
             name: destinationData.name,
-            sales_consultant_id: destinationData.sales_consultant_id,
-            is_active: destinationData.is_active
+            sales_consultant_id: destinationData.sales_consultant_id
           }
         ])
         .select();
@@ -106,8 +104,7 @@
       // Reset form setelah submit
       destinationData = {
         name: '',
-        sales_consultant_id: null,
-        is_active: true
+        sales_consultant_id: null
       };
       selectedConsultant = null;
       searchQuery = '';
@@ -216,18 +213,7 @@
       {/if}
     </div>
 
-    <!-- Status Aktif -->
-    <div class="flex items-center gap-3">
-      <input
-        id="aktif"
-        type="checkbox"
-        bind:checked={destinationData.is_active}
-        class="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
-      />
-      <label for="aktif" class="text-sm font-medium text-slate-700">
-        Destinasi Aktif
-      </label>
-    </div>
+
 
     <!-- Tombol Submit -->
     <button
