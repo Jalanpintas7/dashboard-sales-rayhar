@@ -174,13 +174,8 @@
               </div>
             </div>
             <div class="text-right flex-shrink-0">
-              {#if inquiry.conversion === '0.0%' || parseFloat(inquiry.conversion) > 100}
-                <p class="text-slate-900 font-bold text-sm lg:text-base">{inquiry.totalInquiries}</p>
-                <p class="text-slate-500 text-xs lg:text-sm">leads</p>
-              {:else}
-                <p class="text-slate-900 font-bold text-sm lg:text-base">{inquiry.conversion}</p>
-                <p class="text-slate-500 text-xs lg:text-sm">conversion</p>
-              {/if}
+              <p class="text-slate-900 font-bold text-sm lg:text-base">{inquiry.totalInquiries}</p>
+              <p class="text-slate-500 text-xs lg:text-sm">leads</p>
             </div>
           </div>
         </div>

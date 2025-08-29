@@ -18,7 +18,7 @@ export const themeColors = {
   sec: '#6B7280',          // Medium grey
   grey3: '#9CA3AF',        // Slightly lighter medium grey
   grey2: '#D1D5DB',        // Light grey
-  section: '#f3f2f7'       // Very light grey, almost white
+  section: '#f9fafb'       // Very light grey, almost white
 };
 
 // Tailwind CSS Custom Colors

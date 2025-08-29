@@ -292,7 +292,7 @@ export const getTopSalesConsultants = async (limit = 5) => {
   // Get consultant details with branch information
   const { data: consultants, error: consultantError } = await supabase
     .from('sales_consultant')
-    .select('id, name, email, whatsapp_number')
+    .select('id, name, email, whatsapp_number, sales_consultant_number')
     .in('id', consultantIds);
 
   if (consultantError) throw consultantError;
@@ -344,6 +344,7 @@ export const getTopSalesConsultants = async (limit = 5) => {
         name: consultant.name || 'Unknown',
         email: consultant.email || '',
         whatsapp: consultant.whatsapp_number || '',
+        salesConsultantNumber: consultant.sales_consultant_number || '',
         totalBookings: 0,
         recentBookings: 0,
         branches: new Set()
