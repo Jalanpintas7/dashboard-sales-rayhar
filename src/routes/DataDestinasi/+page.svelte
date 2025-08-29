@@ -114,10 +114,10 @@
 </script>
 
 <RoleGuard allowedRoles={['super_admin', 'admin_branch']}>
-  <div class="p-6 space-y-6">
+  <div class="p-3 sm:p-6 space-y-4 sm:space-y-6">
     <div>
-      <h1 class="text-3xl font-bold text-slate-800 mb-2">Data Destinasi</h1>
-      <p class="text-slate-600">Kelola dan lihat semua data destinasi pelancongan</p>
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">Data Destinasi</h1>
+      <p class="text-sm sm:text-base text-slate-600">Kelola dan lihat semua data destinasi pelancongan</p>
     </div>
 
     <!-- Error Message -->
@@ -128,48 +128,48 @@
     {/if}
 
     <!-- Statistik Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
       <!-- Total Destinasi -->
-      <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-slate-600">Total Destinasi</p>
-            <p class="text-3xl font-bold text-slate-800">{totalDestinations}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{totalDestinations}</p>
           </div>
-          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-            <MapPin class="w-6 h-6 text-green-600" />
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <MapPin class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
           </div>
         </div>
       </div>
 
       <!-- Destinasi Aktif -->
-      <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-slate-600">Destinasi Aktif</p>
-            <p class="text-3xl font-bold text-slate-800">{activeDestinations}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{activeDestinations}</p>
           </div>
-          <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-            <Sun class="w-6 h-6 text-yellow-600" />
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+            <Sun class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
           </div>
         </div>
       </div>
 
       <!-- Destinasi Non-Aktif -->
-      <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-slate-600">Destinasi Non-Aktif</p>
-            <p class="text-3xl font-bold text-slate-800">{inactiveDestinations}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{inactiveDestinations}</p>
           </div>
-          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-            <X class="w-6 h-6 text-red-600" />
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-xl flex items-center justify-center">
+            <X class="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
           </div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
+    <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="md:col-span-2">
           <label for="search" class="block text-sm font-medium text-slate-700 mb-2">Cari Destinasi</label>
@@ -178,7 +178,7 @@
             type="text"
             bind:value={searchTerm}
             placeholder="Cari berdasarkan nama destinasi..."
-            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
           />
         </div>
         <div>
@@ -186,7 +186,7 @@
           <select
             id="statusFilter"
             bind:value={statusFilter}
-            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
           >
             <option value="all">Semua Status</option>
             <option value="active">Aktif</option>
@@ -196,7 +196,7 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
+    <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft border border-white/60 overflow-hidden">
       {#if loading}
         <div class="p-8 text-center">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>

@@ -181,7 +181,9 @@ export async function fetchCustomersData() {
         branches(name),
         destinations(name),
         package_types(name),
-        sales_consultant(name)
+        sales_consultant(name),
+        umrah_seasons(name),
+        umrah_categories(name)
       `)
       .order('created_at', { ascending: false });
 
@@ -191,27 +193,50 @@ export async function fetchCustomersData() {
     }
 
     // Transform data untuk kompatibilitas dengan komponen yang ada
-    return data.map(booking => ({
-      id: booking.id,
-      name: `${booking.gelaran} ${booking.nama}`,
-      email: booking.email,
-      phone: booking.telefon,
-      branch: booking.branches?.name || '-',
-      package: booking.package_types?.name || booking.jenis_pelancongan || '-',
-      category: booking.destinations?.name || '-',
-      status: booking.status || 'pending',
-      price: booking.bilangan ? `${booking.bilangan} pax` : '-',
-      date: new Date(booking.created_at).toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }),
-      avatar: getInitials(booking.nama),
-      consultant: booking.sales_consultant?.name || '-',
-      address: `${booking.alamat}, ${booking.poskod} ${booking.bandar}, ${booking.negeri}`,
-      nokp: booking.nokp,
-      jenis_pelancongan: booking.jenis_pelancongan
-    }));
+    return data.map(booking => {
+      // Tentukan apakah ini paket Umrah atau Pelancongan
+      const isUmrah = booking.package_types?.name === 'Umrah' || 
+                     booking.destinations?.name?.toLowerCase().includes('makkah') ||
+                     booking.destinations?.name?.toLowerCase().includes('madinah');
+      
+      // Tampilkan musim umrah jika paket umrah, destinasi jika paket pelancongan
+      let seasonDestination = '-';
+      if (isUmrah) {
+        if (booking.umrah_seasons?.name) {
+          seasonDestination = booking.umrah_seasons.name;
+        } else if (booking.umrah_categories?.name) {
+          seasonDestination = booking.umrah_categories.name;
+        } else {
+          seasonDestination = 'Umrah Standard';
+        }
+      } else {
+        seasonDestination = booking.destinations?.name || '-';
+      }
+
+      return {
+        id: booking.id,
+        name: `${booking.gelaran || ''} ${booking.nama}`.trim(),
+        email: booking.email,
+        phone: booking.telefon,
+        branch: booking.branches?.name || '-',
+        package: booking.package_types?.name || (isUmrah ? 'Umrah' : 'Pelancongan'),
+        category: seasonDestination,
+        status: booking.status || 'pending',
+        price: booking.bilangan ? `${booking.bilangan} pax` : '-',
+        date: new Date(booking.created_at).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }),
+        avatar: getInitials(booking.nama),
+        consultant: booking.sales_consultant?.name || '-',
+        address: `${booking.alamat || ''}, ${booking.poskod || ''} ${booking.bandar || ''}, ${booking.negeri || ''}`.replace(/^[, ]+|[, ]+$/g, ''),
+        nokp: booking.nokp,
+        jenis_pelancongan: booking.jenis_pelancongan,
+        // Tambahkan field khusus untuk musim/destinasi
+        seasonDestination: seasonDestination
+      };
+    });
   } catch (error) {
     console.error('Error in fetchCustomersData:', error);
     return [];

@@ -59,17 +59,17 @@
   }
 </script>
 
-<div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
-  <div class="flex items-center gap-3 mb-6">
-    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-purple-600">
+<div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
+  <div class="flex items-center gap-3 mb-4 sm:mb-6">
+    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 sm:w-5 sm:h-5 text-purple-600">
         <path d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
         <path d="M16 2v4"/>
         <path d="M8 2v4"/>
         <path d="M3 10h18"/>
       </svg>
     </div>
-    <h2 class="text-xl font-bold text-slate-800">Tambah Musim Umrah Baru</h2>
+    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Tambah Musim Umrah Baru</h2>
   </div>
 
   <!-- Message Display -->
@@ -79,7 +79,7 @@
     </div>
   {/if}
 
-  <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+  <form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
     <div>
       <label for="namaMusim" class="block text-sm font-medium text-slate-700 mb-2">
         Nama Musim *
@@ -90,7 +90,7 @@
         bind:value={seasonData.namaMusim}
         required
         placeholder="Contoh: Ramadhan, Syawal, Dzulhijjah"
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
         disabled={isLoading}
       />
     </div>

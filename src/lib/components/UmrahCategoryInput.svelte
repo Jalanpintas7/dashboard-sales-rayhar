@@ -58,14 +58,14 @@
   }
 </script>
 
-<div class="bg-white rounded-2xl shadow-soft p-6 border border-white/60">
-  <div class="flex items-center gap-3 mb-6">
-    <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 text-yellow-600">
+<div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
+  <div class="flex items-center gap-3 mb-4 sm:mb-6">
+    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
       </svg>
     </div>
-    <h2 class="text-xl font-bold text-slate-800">Tambah Kategori Umrah Baru</h2>
+    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Tambah Kategori Umrah Baru</h2>
   </div>
 
   <!-- Message Display -->
@@ -75,7 +75,7 @@
     </div>
   {/if}
 
-  <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+  <form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
     <div>
       <label for="namaKategori" class="block text-sm font-medium text-slate-700 mb-2">
         Nama Kategori *
@@ -86,7 +86,7 @@
         bind:value={categoryData.namaKategori}
         required
         placeholder="Contoh: Premium, Standard, Ekonomi, VIP"
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
         disabled={isLoading}
       />
     </div>

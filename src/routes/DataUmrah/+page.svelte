@@ -103,15 +103,7 @@
 
     <!-- Data Table dengan Pencarian -->
     <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
-      <!-- Header Card -->
-      <div class="px-6 py-4 border-b border-slate-100">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h2 class="text-xl font-semibold text-slate-800">Data Umrah</h2>
-            <p class="text-slate-600">Kelola data musim, kategori, dan paket umrah</p>
-          </div>
-        </div>
-      </div>
+     
 
       <!-- Menu Pencarian dan Filter -->
       <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
