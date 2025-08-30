@@ -396,7 +396,7 @@
   }
 </script>
 
-<RoleGuard allowedRoles={['super_admin', 'admin_branch']}>
+<RoleGuard allowedRoles={['super_admin']} redirectTo="/login">
   <div class="p-2 sm:p-3 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
     <div>
       <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mb-1 sm:mb-2">Data Destinasi</h1>

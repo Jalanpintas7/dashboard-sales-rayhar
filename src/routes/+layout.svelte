@@ -25,6 +25,11 @@
     goto($redirectPath);
   }
   
+  // Redirect admin branch ke dashboard mereka jika mencoba akses halaman dengan sidebar
+  $: if ($user && $userRole === 'admin_branch' && !isNoSidebarPage && !isAuthPage) {
+    goto('/DashboardBranch');
+  }
+  
   // Initialize Supabase auth on mount
   onMount(() => {
     initializeAuth();

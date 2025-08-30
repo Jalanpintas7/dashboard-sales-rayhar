@@ -1,31 +1,51 @@
 <script>
   import { onMount } from 'svelte';
-  import { fetchCustomersData, getInitials, getPackageColor } from '$lib/data/customers.js';
-  import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText, ChevronLeft, ChevronRight } from 'lucide-svelte';
+  import { fetchCustomersDataByBranch, getInitials, getPackageColor } from '$lib/data/customers.js';
+  import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText } from 'lucide-svelte';
+  import { user } from '$lib/stores/auth.js';
+  import { supabase } from '$lib/supabase.js';
   
-  // State untuk data
   let customersData = [];
   let loading = true;
   let error = null;
-  
-  // State untuk pagination
-  let currentPage = 1;
-  let itemsPerPage = 10;
-  
-  // State untuk filter
-  let searchTerm = '';
-  let packageFilter = '';
-  let branchFilter = '';
+  let userBranch = null;
   
   // State untuk modal detail
   let selectedCustomer = null;
   let showDetailModal = false;
   
-  // Load data saat komponen dimount
   onMount(async () => {
     try {
       loading = true;
-      customersData = await fetchCustomersData();
+      
+      if ($user) {
+        // Ambil informasi branch dari user yang login
+        const { data: userProfile, error: profileError } = await supabase
+          .from('admin_role')
+          .select('branch_id, branches(name)')
+          .eq('user_id', $user.id)
+          .single();
+        
+        if (profileError || !userProfile?.branches?.name) {
+          console.error('Error fetching user branch:', profileError);
+          error = 'Gagal memuat informasi branch';
+          return;
+        }
+        
+        userBranch = userProfile.branches.name;
+        
+        if (userBranch) {
+          // Gunakan data sample dan filter berdasarkan branch yang login
+          const { customersData: sampleData } = await import('$lib/data/customers.js');
+          
+          // Filter berdasarkan branch yang login
+          customersData = sampleData.filter(customer => 
+            customer.branch === userBranch
+          );
+        } else {
+          error = 'Branch tidak ditemukan';
+        }
+      }
     } catch (err) {
       error = 'Gagal memuat data pelanggan';
       console.error('Error loading customers:', err);
@@ -33,90 +53,6 @@
       loading = false;
     }
   });
-  
-  // Data yang sudah difilter
-  $: filteredCustomers = customersData.filter(customer => {
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      if (!customer.name.toLowerCase().includes(search)) {
-        return false;
-      }
-    }
-    if (packageFilter && customer.package !== packageFilter) return false;
-    if (branchFilter && customer.branch !== branchFilter) return false;
-    return true;
-  });
-  
-  // Pagination
-  $: totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
-  $: startIndex = (currentPage - 1) * itemsPerPage;
-  $: endIndex = startIndex + itemsPerPage;
-  $: paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
-  
-  // Fungsi untuk halaman berikutnya
-  function nextPage() {
-    if (currentPage < totalPages) {
-      currentPage++;
-    }
-  }
-  
-  // Fungsi untuk halaman sebelumnya
-  function prevPage() {
-    if (currentPage > 1) {
-      currentPage--;
-    }
-  }
-
-  // Fungsi untuk pergi ke halaman tertentu
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages) {
-      currentPage = page;
-    }
-  }
-
-  // Generate page numbers for pagination
-  function getPageNumbers() {
-    const pages = [];
-    const maxVisiblePages = 5;
-    
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1);
-        pages.push('...');
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push('...');
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      }
-    }
-    
-    return pages;
-  }
-  
-  // Fungsi untuk reset filter
-  function resetFilters() {
-    searchTerm = '';
-    packageFilter = '';
-    branchFilter = '';
-    currentPage = 1;
-  }
   
   // Fungsi untuk menampilkan modal detail
   function showCustomerDetail(customer) {
@@ -129,64 +65,14 @@
     showDetailModal = false;
     selectedCustomer = null;
   }
-  
-  // Dapatkan daftar unik untuk filter
-  $: uniquePackages = [...new Set(customersData.map(c => c.package))];
-  $: uniqueBranches = [...new Set(customersData.map(c => c.branch))];
-  
-  // Reset currentPage ketika filter berubah
-  $: if (searchTerm || packageFilter || branchFilter) {
-    currentPage = 1;
-  }
 </script>
 
 <div class="bg-white rounded-xl shadow-soft border border-white/60 overflow-hidden">
   <!-- Header Tabel -->
   <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
-    <div class="flex items-center justify-between mb-3 sm:mb-4">
-    </div>
-    
-    <!-- Filter Bar -->
-    <div class="space-y-3 sm:space-y-0 sm:flex sm:flex-wrap sm:gap-3 sm:items-center">
-      <!-- Search Input -->
-      <div class="flex-1 min-w-0">
-        <input
-          type="text"
-          bind:value={searchTerm}
-          placeholder="Cari nama..."
-          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-        />
-      </div>
-      
-      <!-- Package Filter -->
-      <select
-        bind:value={packageFilter}
-        class="w-full sm:w-40 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-      >
-        <option value="">Semua Paket</option>
-        {#each uniquePackages as packageType}
-          <option value={packageType}>{packageType}</option>
-        {/each}
-      </select>
-      
-      <!-- Branch Filter -->
-      <select
-        bind:value={branchFilter}
-        class="w-full sm:w-40 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-      >
-        <option value="">Semua Cawangan</option>
-        {#each uniqueBranches as branch}
-          <option value={branch}>{branch}</option>
-        {/each}
-      </select>
-      
-      <!-- Reset Button -->
-      <button
-        on:click={resetFilters}
-        class="w-full sm:w-auto px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-      >
-        Reset
-      </button>
+    <div class="mb-3 sm:mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">Data Pelanggan Branch</h3>
+      <p class="text-sm text-gray-600">Branch: {userBranch || 'Loading...'}</p>
     </div>
   </div>
 
@@ -205,12 +91,6 @@
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">Gagal memuat data</h3>
       <p class="text-gray-500 mb-4">{error}</p>
-      <button 
-        on:click={() => window.location.reload()}
-        class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-      >
-        Coba Lagi
-      </button>
     </div>
   {:else if customersData.length === 0}
     <div class="p-8 text-center">
@@ -218,7 +98,7 @@
         <Users class="mx-auto h-12 w-12" />
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data pelanggan</h3>
-      <p class="text-gray-500">Belum ada data pelanggan yang tersedia.</p>
+      <p class="text-gray-500">Belum ada data pelanggan untuk branch ini.</p>
     </div>
   {:else}
     <!-- Tabel -->
@@ -230,13 +110,10 @@
               PELANGGAN
             </th>
             <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              CAWANGAN
-            </th>
-            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               PAKEJ
             </th>
-                        <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              MUSIM/DESTINASI
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+             MUSIM/DESTINASI
             </th>
             <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               DARI INQUIRY
@@ -247,7 +124,7 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-100">
-          {#each paginatedCustomers as customer}
+          {#each customersData as customer}
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" on:click={() => showCustomerDetail(customer)}>
               <!-- Kolom PELANGGAN -->
               <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -263,11 +140,6 @@
                     <div class="text-xs sm:text-sm font-medium text-gray-900">{customer.name}</div>
                   </div>
                 </div>
-              </td>
-              
-              <!-- Kolom CAWANGAN -->
-              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                <div class="text-xs sm:text-sm text-gray-900">{customer.branch}</div>
               </td>
               
               <!-- Kolom PAKEJ -->
@@ -302,47 +174,6 @@
         </tbody>
       </table>
     </div>
-    
-                   <!-- Pagination -->
-      {#if totalPages > 1}
-        <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div class="flex items-center text-xs sm:text-sm text-gray-700">
-              <span>Menampilkan {startIndex + 1} - {Math.min(endIndex, filteredCustomers.length)} dari {filteredCustomers.length} data</span>
-            </div>
-            <div class="flex items-center justify-center sm:justify-end space-x-2">
-              <button
-                on:click={prevPage}
-                disabled={currentPage === 1}
-                class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-              
-              {#each getPageNumbers() as page}
-                {#if page === '...'}
-                  <span class="px-2 sm:px-3 py-2 text-gray-400 text-xs sm:text-sm">...</span>
-                {:else}
-                  <button
-                    on:click={() => goToPage(page)}
-                    class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'text-gray-700 hover:bg-gray-100'}"
-                  >
-                    {page}
-                  </button>
-                {/if}
-              {/each}
-              
-              <button
-                on:click={nextPage}
-                disabled={currentPage === totalPages}
-                class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      {/if}
   {/if}
 </div>
 
@@ -432,8 +263,17 @@
                 <div class="flex items-start gap-3">
                   <MapPin class="w-4 h-4 text-gray-400 mt-1" />
                   <div>
-                    <p class="text-sm text-gray-500">Alamat</p>
-                    <p class="text-gray-900">{selectedCustomer.address}</p>
+                    <p class="text-sm text-gray-500">Alamat Lengkap</p>
+                    <div class="space-y-1">
+                      <p class="text-gray-900">{selectedCustomer.address}</p>
+                      {#if selectedCustomer.poskod || selectedCustomer.bandar || selectedCustomer.negeri}
+                        <div class="text-sm text-gray-600">
+                          {#if selectedCustomer.poskod}{selectedCustomer.poskod}{/if}
+                          {#if selectedCustomer.bandar}, {selectedCustomer.bandar}{/if}
+                          {#if selectedCustomer.negeri}, {selectedCustomer.negeri}{/if}
+                        </div>
+                      {/if}
+                    </div>
                   </div>
                 </div>
               {/if}
@@ -498,6 +338,8 @@
              </div>
            </div>
          </div>
+
+
 
         <!-- Harga dan Informasi Tambahan -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -5,9 +5,11 @@
   import SalesInquiryOverview from '$lib/components/SalesInquiryOverview.svelte';
   import TopSales from '$lib/components/TopSales.svelte';
   import PackageTopSales from '$lib/components/PackageTopSales.svelte';
-  import TopInquiry from '$lib/components/TopInquiry.svelte';
-  import RoleGuard from '$lib/components/RoleGuard.svelte';
-  import ProfileDropdown from '$lib/components/ProfileDropdown.svelte';
+import TopInquiry from '$lib/components/TopInquiry.svelte';
+import CustomerTableBranch from '$lib/components/CustomerTableBranch.svelte';
+import LeadTableBranch from '$lib/components/LeadTableBranch.svelte';
+import RoleGuard from '$lib/components/RoleGuard.svelte';
+import ProfileDropdown from '$lib/components/ProfileDropdown.svelte';
   import { user, loading } from '$lib/stores/auth.js';
   
   // Redirect ke login jika tidak ada user
@@ -68,6 +70,15 @@
           <TopInquiry />
         </div>
         
+                    <!-- Customer Table Section -->
+            <div class="mb-10">
+              <CustomerTableBranch />
+            </div>
+            
+            <!-- Lead Table Section -->
+            <div class="mb-10">
+              <LeadTableBranch />
+            </div>
         
       </div>
     </div>

@@ -4,7 +4,9 @@
   import { signIn, user, loading } from '$lib/stores/auth.js';
   import EmailInput from '$lib/components/EmailInput.svelte';
   import PasswordInput from '$lib/components/PasswordInput.svelte';
-  import { Lock, Loader2, LogIn } from 'lucide-svelte';
+  import { Loader2, LogIn } from 'lucide-svelte';
+  import { themeColors } from '$lib/theme/colors.js';
+  import logoSrc from '$lib/assets/logorayharsvg.svg';
 
   let email = '';
   let password = '';
@@ -62,8 +64,8 @@
   <div class="max-w-md w-full space-y-8">
     <!-- Logo dan Header -->
     <div class="text-center">
-      <div class="mx-auto h-20 w-20 bg-gradient-to-r from-purple-600 to-violet-600 rounded-full flex items-center justify-center mb-4">
-        <Lock class="h-12 w-12 text-white" />
+      <div class="mx-auto w-40 bg-gradient-to-r from-primary-600 to-primary-700 rounded-full flex items-center justify-center mb-4" style="--tw-gradient-from: {themeColors.primary}; --tw-gradient-to: {themeColors.primary}88;">
+        <img src={logoSrc} alt="Logo Rayhar"  />
       </div>
       <h2 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang</h2>
       <p class="text-gray-600">Masuk ke dashboard admin Rayhar</p>
@@ -99,32 +101,22 @@
           on:input={handleInputChange}
         />
 
-        <!-- Remember Me -->
-        <div class="flex items-center">
-          <input
-            id="remember-me"
-            type="checkbox"
-            bind:checked={rememberMe}
-            class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-          />
-          <label for="remember-me" class="ml-2 block text-sm text-gray-700">
-            Ingat saya
-          </label>
-        </div>
+       
 
         <!-- Login Button -->
         <div>
-          <button
-            type="submit"
-            disabled={isLoading || $loading}
-            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
+                     <button
+             type="submit"
+             disabled={isLoading || $loading}
+             class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+             style="background-color: {themeColors.primary}; --tw-ring-color: {themeColors.primary};"
+           >
             {#if isLoading || $loading}
               <Loader2 class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
               Memproses...
             {:else}
               <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                <LogIn class="h-5 w-5 text-purple-500 group-hover:text-purple-400" />
+                <LogIn class="h-5 w-5 text-white group-hover:text-white" />
               </span>
               Masuk
             {/if}
@@ -132,14 +124,7 @@
         </div>
       </form>
 
-      <!-- Info Role -->
-      <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h3 class="text-sm font-medium text-blue-800 mb-2">Info Role:</h3>
-        <ul class="text-xs text-blue-700 space-y-1">
-          <li>• <strong>Super Admin:</strong> Akses penuh ke semua fitur dashboard utama</li>
-          <li>• <strong>Admin Branch:</strong> Akses terbatas ke dashboard branch</li>
-        </ul>
-      </div>
+      
     </div>
   </div>
 </div>

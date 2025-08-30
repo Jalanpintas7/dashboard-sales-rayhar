@@ -1,5 +1,6 @@
 <script>
   import CustomerTable from '$lib/components/CustomerTable.svelte';
+  import LeadTable from '$lib/components/LeadTable.svelte';
   import RoleGuard from '$lib/components/RoleGuard.svelte';
   import { user, loading } from '$lib/stores/auth.js';
   import { goto } from '$app/navigation';
@@ -19,6 +20,13 @@
     </div>
 
     <!-- Customer Table -->
-    <CustomerTable />
+    <div class="mb-6">
+      <CustomerTable />
+    </div>
+
+    <!-- Lead Table -->
+    <div class="mb-6">
+      <LeadTable />
+    </div>
   </div>
 </RoleGuard>

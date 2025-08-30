@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import SummaryCards from '$lib/components/SummaryCards.svelte';
   import SalesInquiryOverview from '$lib/components/SalesInquiryOverview.svelte';
   import TopSales from '$lib/components/TopSales.svelte';
@@ -8,15 +9,20 @@
   import TopInquiry from '$lib/components/TopInquiry.svelte';
   import RoleGuard from '$lib/components/RoleGuard.svelte';
   import ProfileDropdown from '$lib/components/ProfileDropdown.svelte';
-  import { user, loading } from '$lib/stores/auth.js';
+  import { user, userRole, loading } from '$lib/stores/auth.js';
   
   // Redirect ke login jika tidak ada user (hanya jika di halaman ini)
   $: if (!$loading && !$user) {
     goto('/login');
   }
+  
+  // Redirect admin branch ke dashboard mereka sendiri
+  $: if ($userRole === 'admin_branch' && $page.url.pathname === '/') {
+    goto('/DashboardBranch');
+  }
 </script>
 
-<RoleGuard allowedRoles={['super_admin', 'admin_branch']} redirectTo="/login">
+<RoleGuard allowedRoles={['super_admin']} redirectTo="/login">
   <div class="pt-2 pb-2 px-2 sm:pt-3 sm:pb-3 sm:px-3 lg:pt-4 lg:pb-4 lg:px-4 bg-gray-50 min-h-full rounded-xl mr-1 sm:mr-2 lg:mr-4">
     <!-- Page Header -->
     <div class="mb-4 lg:mb-6">
