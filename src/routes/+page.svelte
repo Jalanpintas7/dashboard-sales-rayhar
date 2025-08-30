@@ -7,6 +7,7 @@
   import PackageTopSales from '$lib/components/PackageTopSales.svelte';
   import TopInquiry from '$lib/components/TopInquiry.svelte';
   import RoleGuard from '$lib/components/RoleGuard.svelte';
+  import ProfileDropdown from '$lib/components/ProfileDropdown.svelte';
   import { user, loading } from '$lib/stores/auth.js';
   
   // Redirect ke login jika tidak ada user (hanya jika di halaman ini)
@@ -19,9 +20,16 @@
   <div class="pt-2 pb-2 px-2 sm:pt-3 sm:pb-3 sm:px-3 lg:pt-4 lg:pb-4 lg:px-4 bg-gray-50 min-h-full rounded-xl mr-1 sm:mr-2 lg:mr-4">
     <!-- Page Header -->
     <div class="mb-4 lg:mb-6">
-      <div>
-        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p class="text-base text-gray-600">Welcome to your admin dashboard</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+          <p class="text-base text-gray-600">Welcome to your admin dashboard</p>
+        </div>
+        
+        <!-- Profile Dropdown - Hanya tampil di desktop -->
+        <div class="hidden lg:flex">
+          <ProfileDropdown />
+        </div>
       </div>
     </div>
 

@@ -70,7 +70,7 @@
 <div class="lg:hidden fixed top-4 right-4 z-50">
   <button 
     on:click={toggleMobile}
-    class="p-2 bg-purple-600 text-white rounded-lg shadow-lg hover:bg-purple-700 transition-colors"
+    class="p-2 bg-[#942392] text-white rounded-lg shadow-lg hover:bg-[#7a1d7a] transition-colors"
     aria-label="Toggle mobile menu"
   >
     <Menu class="w-6 h-6" />
@@ -87,7 +87,7 @@
 
 <!-- Mobile Sidebar -->
 <aside class="
-  lg:hidden fixed right-0 top-0 h-full w-80 max-w-[85vw]
+  lg:hidden fixed right-0 top-0 h-full w-72 max-w-[70vw]
   bg-white/95 backdrop-blur-md border-l border-white/50
   shadow-2xl z-50 transform transition-transform duration-300 ease-in-out
   {isMobileOpen ? 'translate-x-0' : 'translate-x-full'}
@@ -199,9 +199,10 @@
   overflow-hidden
   sticky top-4
   max-h-[calc(100vh-2rem)]
+  flex flex-col
 ">
   <!-- Inner background dengan gradient halus -->
-  <div class="bg-gradient-to-b from-white/60 to-white/30 p-6">
+  <div class="bg-gradient-to-b from-white/60 to-white/30 p-6 flex flex-col flex-1">
     <!-- Logo + Brand -->
     <div class="flex items-center gap-4 mb-8">
       <!-- Logo Rayhar -->
@@ -213,7 +214,7 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="space-y-3">
+    <nav class="space-y-3 flex-1">
       {#each menuItems as item}
         <a 
           href={item.href}
@@ -258,36 +259,13 @@
       {/each}
     </nav>
 
-    <!-- Spacer -->
-    <div class="h-[520px]"></div>
-
-    <!-- User Info & Logout -->
-    {#if $user}
-      <div class="border-t border-slate-200 pt-4 mb-4">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-            <User class="w-4 h-4 text-purple-600" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-sm font-medium text-slate-700 truncate">{$user.email}</div>
-            <div class="text-xs text-slate-500">{roleDisplayName}</div>
-          </div>
-        </div>
-        <button
-          on:click={handleLogout}
-          class="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-        >
-          <LogOut class="w-4 h-4" />
-          Logout
-        </button>
-      </div>
-    {/if}
+    <!-- Spacer untuk footer -->
+    <div class="flex-1"></div>
 
     <!-- Footer -->
     <footer class="pt-3 pb-2">
       <div class="text-sm font-semibold text-slate-700">Rayhar Admin Dashboard</div>
       <div class="text-xs text-slate-400">© 2024 All Rights Reserved</div>
-      <div class="mt-3 text-xs text-slate-400">Made with <span class="mx-0.5">❤️</span> by <a href="#" class="font-medium text-slate-500 hover:underline">pixeluniverce</a></div>
     </footer>
   </div>
 </aside>
@@ -301,4 +279,6 @@
   :global(.shadow-innerSoft) {
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
   }
+  
+
 </style>
