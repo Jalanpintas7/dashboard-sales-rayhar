@@ -74,16 +74,16 @@
 
 <svelte:window on:click={handleClickOutside} />
 
-<div class="bg-white/90 backdrop-blur-sm rounded-card shadow-soft border border-white/80 p-3 lg:p-5 xl:p-7">
+<div class="bg-white/90 backdrop-blur-sm rounded-card shadow-soft border border-white/80 p-3 sm:p-4 lg:p-5 xl:p-7">
   <!-- Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 lg:mb-6 gap-3 lg:gap-4">
-    <h2 class="text-base lg:text-lg xl:text-xl font-bold text-slate-900">Top Inquiry</h2>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 lg:mb-6 gap-3 lg:gap-4">
+    <h2 class="text-base sm:text-lg lg:text-xl font-bold text-slate-900">Top Inquiry</h2>
     
     <!-- Dropdown (custom styled) -->
-    <div class="relative">
+    <div class="relative self-end sm:self-auto">
       <button
         type="button"
-        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 active:scale-[0.99] transition"
+        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 sm:px-3.5 sm:py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 active:scale-[0.99] transition"
         aria-haspopup="menu"
         aria-expanded={isMenuOpen}
         on:click={toggleMenu}
@@ -123,19 +123,19 @@
   </div>
 
   <!-- Content -->
-  <div class="space-y-2 lg:space-y-3 xl:space-y-4">
+  <div class="space-y-2 sm:space-y-2 lg:space-y-3 xl:space-y-4">
     {#if loading}
       <!-- Loading state -->
-      <div class="flex items-center justify-center py-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        <span class="ml-3 text-slate-600">Loading...</span>
+      <div class="flex items-center justify-center py-6 sm:py-8">
+        <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-indigo-600"></div>
+        <span class="ml-2 sm:ml-3 text-slate-600 text-sm">Loading...</span>
       </div>
     {:else if error}
       <!-- Error state -->
-      <div class="text-center py-8">
-        <p class="text-red-600 text-sm">Error: {error}</p>
+      <div class="text-center py-6 sm:py-8">
+        <p class="text-red-600 text-xs sm:text-sm">Error: {error}</p>
         <button 
-          class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700"
+          class="mt-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-lg text-xs sm:text-sm hover:bg-indigo-700"
           on:click={loadTopInquiries}
         >
           Coba Lagi
@@ -143,22 +143,22 @@
       </div>
     {:else if topInquiries.length === 0}
       <!-- Empty state -->
-      <div class="text-center py-8">
-        <p class="text-slate-500 text-sm">Tidak ada data inquiry untuk ditampilkan</p>
+      <div class="text-center py-6 sm:py-8">
+        <p class="text-slate-500 text-xs sm:text-sm">Tidak ada data inquiry untuk ditampilkan</p>
       </div>
     {:else}
       <!-- Inquiry list -->
       {#each topInquiries as inquiry}
         <div class="
           bg-section
-          p-2 lg:p-3 xl:p-4 
+          p-2 sm:p-2 lg:p-3 xl:p-4 
           transition-all duration-200
-          rounded-2xl
+          rounded-xl sm:rounded-2xl
         ">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
               <div class="
-                w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
+                w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10
                 bg-indigo-100 
                 rounded-full 
                 flex items-center justify-center
@@ -170,12 +170,12 @@
                 {inquiry.rank}
               </div>
               <div class="min-w-0 flex-1">
-                <h3 class="text-slate-900 font-medium text-xs lg:text-sm xl:text-base truncate">{inquiry.name}</h3>
+                <h3 class="text-slate-900 font-medium text-sm sm:text-base lg:text-lg truncate">{inquiry.name}</h3>
               </div>
             </div>
             <div class="text-right flex-shrink-0">
-              <p class="text-slate-900 font-bold text-sm lg:text-base">{inquiry.totalInquiries}</p>
-              <p class="text-slate-500 text-xs lg:text-sm">leads</p>
+              <p class="text-slate-900 font-bold text-sm sm:text-base lg:text-lg">{inquiry.totalInquiries}</p>
+              <p class="text-slate-500 text-sm sm:text-base">leads</p>
             </div>
           </div>
         </div>

@@ -52,7 +52,7 @@
   <slot />
 {:else}
   <!-- Layout untuk dashboard (dengan sidebar) -->
-  <div class="min-h-screen bg-gray-50 p-2 lg:p-4">
+  <div class="min-h-screen bg-gray-50 pt-1 pb-2 px-2 lg:pt-2 lg:pb-4 lg:px-4">
     <!-- Main Application Card -->
     <div class="
       w-full
@@ -69,5 +69,10 @@
         <slot />
       </main>
     </div>
+  </div>
+  
+  <!-- Mobile Sidebar Container - Selalu di-render tapi hidden di desktop -->
+  <div class="lg:hidden">
+    <Sidebar />
   </div>
 {/if}

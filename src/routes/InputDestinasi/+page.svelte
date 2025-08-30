@@ -14,19 +14,19 @@
 </script>
 
 <RoleGuard allowedRoles={["super_admin"]} redirectTo="/login">
-  <div class="p-3 sm:p-6 space-y-4 sm:space-y-6">
+  <div class="p-2 sm:p-3 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
     <!-- Header Halaman -->
-    <div class="mb-6 sm:mb-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+    <div class="mb-4 sm:mb-6">
+      <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mb-1 sm:mb-2">
         Manajemen Destinasi
       </h1>
-      <p class="text-sm sm:text-base text-slate-600">
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
         Kelola destinasi pelancongan untuk paket perjalanan Anda
       </p>
     </div>
 
     <!-- Layout Grid -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3 sm:gap-4 lg:gap-8">
             <!-- Add Destination Card -->
             <AddDestinationCard />
       <!-- Form Input Destinasi -->

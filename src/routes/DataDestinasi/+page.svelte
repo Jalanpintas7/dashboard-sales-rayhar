@@ -397,43 +397,43 @@
 </script>
 
 <RoleGuard allowedRoles={['super_admin', 'admin_branch']}>
-  <div class="p-3 sm:p-6 space-y-4 sm:space-y-6">
+  <div class="p-2 sm:p-3 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">Data Destinasi</h1>
-      <p class="text-sm sm:text-base text-slate-600">Kelola dan lihat semua data destinasi pelancongan</p>
+      <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mb-1 sm:mb-2">Data Destinasi</h1>
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed">Kelola dan lihat semua data destinasi pelancongan</p>
     </div>
 
     <!-- Error Message -->
     {#if error}
-      <div class="bg-red-50 border border-red-200 rounded-xl p-4">
-        <p class="text-red-700 text-sm">Error: {error}</p>
+      <div class="bg-red-50 border border-red-200 rounded-lg sm:rounded-xl p-2.5 sm:p-3">
+        <p class="text-red-700 text-xs sm:text-sm">Error: {error}</p>
       </div>
     {/if}
 
     <!-- Statistik Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
       <!-- Total Destinasi -->
-      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
+      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-3 sm:p-4 lg:p-6 border border-white/60">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-slate-600">Total Destinasi</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{totalDestinations}</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">Total Destinasi</p>
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{totalDestinations}</p>
           </div>
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
-            <MapPin class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+          <div class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-green-100 rounded-xl flex items-center justify-center">
+            <MapPin class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-green-600" />
           </div>
         </div>
       </div>
 
       <!-- Total Paket Outbound -->
-      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
+      <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-3 sm:p-4 lg:p-6 border border-white/60">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-slate-600">Total Paket Outbound</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{totalOutboundPackages}</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">Total Paket Outbound</p>
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{totalOutboundPackages}</p>
           </div>
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-            <MapPin class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+          <div class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <MapPin class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-blue-600" />
           </div>
         </div>
       </div>
@@ -443,19 +443,19 @@
     <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
      
       <!-- Menu Pencarian dan Filter -->
-      <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-        <div class="grid grid-cols-1 gap-4">
+      <div class="px-3 sm:px-6 py-3 sm:py-4 border-b border-slate-100 bg-slate-50">
+        <div class="grid grid-cols-1 gap-3 sm:gap-4">
           <!-- Search Input -->
           <div>
-            <label for="searchTerm" class="block text-sm font-medium text-slate-700 mb-2">Cari Data</label>
+            <label for="searchTerm" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">Cari Data</label>
             <div class="relative">
-              <Search class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search class="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
               <input
                 id="searchTerm"
                 type="text"
                 bind:value={searchTerm}
                 placeholder="Cari destinasi atau paket outbound..."
-                class="w-full pl-12 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                class="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
               />
             </div>
           </div>
@@ -463,19 +463,19 @@
 
         <!-- Hasil Pencarian -->
         {#if loading}
-          <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-            <div class="flex items-center gap-3">
-              <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <p class="text-blue-800 text-sm">Memuat data...</p>
+          <div class="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg sm:rounded-xl">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <div class="w-3 h-3 sm:w-4 sm:h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <p class="text-blue-800 text-xs sm:text-sm">Memuat data...</p>
             </div>
           </div>
         {:else if filteredDestinations.length === 0 && filteredOutboundPackages.length === 0}
-          <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
-            <div class="flex items-center gap-3">
-              <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-yellow-50 border border-yellow-200 rounded-lg sm:rounded-xl">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
               </svg>
-              <p class="text-yellow-800 text-sm">Tidak ada data yang ditemukan dengan filter yang dipilih</p>
+              <p class="text-yellow-800 text-xs sm:text-sm">Tidak ada data yang ditemukan dengan filter yang dipilih</p>
             </div>
           </div>
         {/if}
@@ -483,15 +483,15 @@
 
       <!-- Tab Navigation -->
       <div class="border-b border-slate-100">
-        <nav class="flex space-x-8 px-6">
+        <nav class="flex space-x-4 sm:space-x-8 px-3 sm:px-6">
           <button
-            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab === 'destinations' ? 'border-green-500 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
+            class="py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-200 {activeTab === 'destinations' ? 'border-green-500 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
             on:click={() => activeTab = 'destinations'}
           >
             Destinasi ({filteredDestinations.length})
           </button>
           <button
-            class="py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab === 'outbound' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
+            class="py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-200 {activeTab === 'outbound' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
             on:click={() => activeTab = 'outbound'}
           >
             Paket Outbound ({filteredOutboundPackages.length})
@@ -500,27 +500,27 @@
       </div>
 
       <!-- Tab Content -->
-      <div class="p-6">
+      <div class="p-3 sm:p-6">
         {#if loading}
-          <div class="flex items-center justify-center py-12">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
-            <span class="ml-3 text-slate-600">Memuat data...</span>
+          <div class="flex items-center justify-center py-6 sm:py-8 lg:py-12">
+            <div class="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 border-b-2 border-yellow-500"></div>
+            <span class="ml-2 sm:ml-3 text-xs sm:text-sm text-slate-600">Memuat data...</span>
           </div>
         {:else if activeTab === 'destinations' && filteredDestinations.length === 0}
-          <div class="text-center py-12">
-            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MapPin class="w-8 h-8 text-slate-400" />
+          <div class="text-center py-6 sm:py-8 lg:py-12">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4">
+              <MapPin class="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-slate-400" />
             </div>
-            <h3 class="text-lg font-medium text-slate-900 mb-2">Tidak ada data destinasi</h3>
-            <p class="text-slate-500">Coba ubah filter pencarian Anda</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-medium text-slate-900 mb-1 sm:mb-2">Tidak ada data destinasi</h3>
+            <p class="text-xs sm:text-sm text-slate-500">Coba ubah filter pencarian Anda</p>
           </div>
         {:else if activeTab === 'outbound' && filteredOutboundPackages.length === 0}
-          <div class="text-center py-12">
-            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MapPin class="w-8 h-8 text-slate-400" />
+          <div class="text-center py-6 sm:py-8 lg:py-12">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4">
+              <MapPin class="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-slate-400" />
             </div>
-            <h3 class="text-lg font-medium text-slate-900 mb-2">Tidak ada data paket outbound</h3>
-            <p class="text-slate-500">Coba ubah filter pencarian Anda</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-medium text-slate-900 mb-1 sm:mb-2">Tidak ada data paket outbound</h3>
+            <p class="text-xs sm:text-sm text-slate-500">Coba ubah filter pencarian Anda</p>
           </div>
         {:else}
           <!-- Destinations Table -->
@@ -529,42 +529,42 @@
               <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Destinasi</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Destinasi</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
                   {#each paginatedDestinations as destination}
                     <tr class="hover:bg-slate-50">
-                      <td class="px-6 py-4 whitespace-nowrap">
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                            <MapPin class="w-4 h-4 text-green-600" />
+                          <div class="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center mr-2 sm:mr-3">
+                            <MapPin class="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                           </div>
                           <div>
-                            <div class="text-sm font-medium text-slate-900">{destination.name}</div>
+                            <div class="text-xs sm:text-sm font-medium text-slate-900">{destination.name}</div>
                           </div>
                         </div>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-slate-500">
                         {formatDate(destination.created_at)}
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex space-x-2">
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                        <div class="flex space-x-1.5 sm:space-x-2">
                           <button
                             on:click={() => openEditModal(destination)}
                             class="text-blue-600 hover:text-blue-900"
                             title="Edit"
                           >
-                            <Edit class="w-4 h-4" />
+                            <Edit class="w-3 h-3 sm:w-4 sm:h-4" />
                           </button>
                           <button
                             on:click={() => showDeleteConfirmation('destination', destination)}
                             class="text-red-600 hover:text-red-900"
                             title="Hapus"
                           >
-                            <Trash2 class="w-4 h-4" />
+                            <Trash2 class="w-3 h-3 sm:w-4 sm:h-4" />
                           </button>
                         </div>
                       </td>
@@ -576,26 +576,26 @@
 
             <!-- Pagination for Destinations -->
             {#if totalPagesDestinations > 1}
-              <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200">
-                <div class="flex items-center text-sm text-slate-700">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 sm:px-6 py-4 border-t border-slate-200">
+                <div class="flex items-center text-xs sm:text-sm text-slate-700">
                   <span>Menampilkan {startIndexDestinations + 1} - {Math.min(endIndexDestinations, filteredDestinations.length)} dari {filteredDestinations.length} data</span>
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center justify-center sm:justify-end space-x-1.5 sm:space-x-2">
                   <button
                     on:click={goToPreviousPage}
                     disabled={currentPage === 1}
-                    class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <ChevronLeft class="w-4 h-4" />
+                    <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
                   </button>
                   
                   {#each getPageNumbers() as page}
                     {#if page === '...'}
-                      <span class="px-3 py-2 text-slate-400">...</span>
+                      <span class="px-2 sm:px-3 py-2 text-xs sm:text-sm text-slate-400">...</span>
                     {:else}
                       <button
                         on:click={() => goToPage(page)}
-                        class="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-green-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
+                        class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-green-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
                       >
                         {page}
                       </button>
@@ -605,9 +605,9 @@
                   <button
                     on:click={goToNextPage}
                     disabled={currentPage === totalPagesDestinations}
-                    class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <ChevronRight class="w-4 h-4" />
+                    <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
@@ -620,54 +620,54 @@
               <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Destinasi</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Periode</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Destinasi</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Periode</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga</th>
+                    <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
                   {#each paginatedOutboundPackages as outboundPackage}
                     <tr class="hover:bg-slate-50">
-                      <td class="px-6 py-4 whitespace-nowrap">
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                            <MapPin class="w-4 h-4 text-blue-600" />
+                          <div class="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2 sm:mr-3">
+                            <MapPin class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
                           </div>
                           <div>
-                            <div class="text-sm font-medium text-slate-900">
+                            <div class="text-xs sm:text-sm font-medium text-slate-900">
                               {outboundPackage.destinations?.name || 'N/A'}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-slate-500">
                         <div>
                           <div>{formatDate(outboundPackage.start_date)}</div>
                           <div class="text-xs text-slate-400">s/d {formatDate(outboundPackage.end_date)}</div>
                         </div>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-slate-900">
                         {outboundPackage.price || '-'}
                       </td>
-                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                         <div class="flex space-x-2">
-                           <button
-                             on:click={() => openEditOutboundModal(outboundPackage)}
-                             class="text-blue-600 hover:text-blue-900"
-                             title="Edit"
-                           >
-                             <Edit class="w-4 h-4" />
-                           </button>
-                           <button
-                             on:click={() => showDeleteConfirmation('outbound', outboundPackage)}
-                             class="text-red-600 hover:text-red-900"
-                             title="Hapus"
-                           >
-                             <Trash2 class="w-4 h-4" />
-                           </button>
-                         </div>
-                       </td>
+                      <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                        <div class="flex space-x-1.5 sm:space-x-2">
+                          <button
+                            on:click={() => openEditOutboundModal(outboundPackage)}
+                            class="text-blue-600 hover:text-blue-900"
+                            title="Edit"
+                          >
+                            <Edit class="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                          <button
+                            on:click={() => showDeleteConfirmation('outbound', outboundPackage)}
+                            class="text-red-600 hover:text-red-900"
+                            title="Hapus"
+                          >
+                            <Trash2 class="w-3 h-3 sm:w-4 sm:h-4" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   {/each}
                 </tbody>
@@ -676,26 +676,26 @@
 
             <!-- Pagination for Outbound Packages -->
             {#if totalPagesOutboundPackages > 1}
-              <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200">
-                <div class="flex items-center text-sm text-slate-700">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 sm:px-6 py-4 border-t border-slate-200">
+                <div class="flex items-center text-xs sm:text-sm text-slate-700">
                   <span>Menampilkan {startIndexOutboundPackages + 1} - {Math.min(endIndexOutboundPackages, filteredOutboundPackages.length)} dari {filteredOutboundPackages.length} data</span>
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center justify-center sm:justify-end space-x-1.5 sm:space-x-2">
                   <button
                     on:click={goToPreviousPage}
                     disabled={currentPage === 1}
-                    class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <ChevronLeft class="w-4 h-4" />
+                    <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
                   </button>
                   
                   {#each getPageNumbers() as page}
                     {#if page === '...'}
-                      <span class="px-3 py-2 text-slate-400">...</span>
+                      <span class="px-2 sm:px-3 py-2 text-xs sm:text-sm text-slate-400">...</span>
                     {:else}
                       <button
                         on:click={() => goToPage(page)}
-                        class="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
+                        class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
                       >
                         {page}
                       </button>
@@ -705,9 +705,9 @@
                   <button
                     on:click={goToNextPage}
                     disabled={currentPage === totalPagesOutboundPackages}
-                    class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <ChevronRight class="w-4 h-4" />
+                    <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
@@ -893,22 +893,22 @@
   <!-- Snackbar Notification -->
   {#if showSnackbar}
     <div class="fixed top-4 right-4 z-[60] transition-all duration-300 ease-in-out">
-      <div class="flex items-center gap-3 p-4 rounded-lg shadow-lg border max-w-sm {snackbarType === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}">
+      <div class="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-lg shadow-lg border max-w-sm {snackbarType === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}">
         {#if snackbarType === 'success'}
-          <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         {:else}
-          <svg class="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
           </svg>
         {/if}
-        <span class="font-medium text-sm">{snackbarMessage}</span>
+        <span class="font-medium text-xs sm:text-sm">{snackbarMessage}</span>
         <button
           on:click={() => showSnackbar = false}
           class="ml-2 p-1 rounded-full hover:bg-white/20 transition-colors flex-shrink-0"
         >
-          <X class="w-4 h-4" />
+          <X class="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
       </div>
     </div>

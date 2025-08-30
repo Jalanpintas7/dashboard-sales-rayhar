@@ -193,55 +193,55 @@
 </script>
 
 {#if loading}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-8 lg:mb-10">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-10 mb-6 sm:mb-8 lg:mb-10">
     {#each Array(4) as _, i}
-      <div class="relative w-full h-[140px] lg:h-[160px] rounded-card bg-white/90 backdrop-blur-sm shadow-soft border border-white/80 p-4 lg:p-5 flex items-start justify-between">
+      <div class="relative w-full h-[120px] sm:h-[140px] lg:h-[160px] rounded-card bg-white/90 backdrop-blur-sm shadow-soft border border-white/80 p-3 sm:p-4 lg:p-5 flex items-start justify-between">
         <div class="h-full flex flex-col justify-between w-full">
           <div class="animate-pulse">
-            <div class="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-            <div class="h-8 bg-gray-200 rounded w-16 mb-2"></div>
+            <div class="h-3 sm:h-4 bg-gray-200 rounded w-20 sm:w-24 mb-2"></div>
+            <div class="h-6 sm:h-8 bg-gray-200 rounded w-12 sm:w-16 mb-2"></div>
           </div>
           <div class="animate-pulse">
-            <div class="h-4 bg-gray-200 rounded w-20"></div>
+            <div class="h-3 sm:h-4 bg-gray-200 rounded w-16 sm:w-20"></div>
           </div>
         </div>
         <div class="animate-pulse">
-          <div class="w-10 h-10 bg-gray-200 rounded-xl"></div>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-xl"></div>
         </div>
       </div>
     {/each}
   </div>
 {:else if error}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-8 lg:mb-10">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-10 mb-6 sm:mb-8 lg:mb-10">
     {#each Array(4) as _, i}
-      <div class="relative w-full h-[140px] lg:h-[160px] rounded-card bg-white/90 backdrop-blur-sm shadow-soft border border-white/80 p-4 lg:p-5 flex items-center justify-center">
+      <div class="relative w-full h-[120px] sm:h-[140px] lg:h-[160px] rounded-card bg-white/90 backdrop-blur-sm shadow-soft border border-white/80 p-3 sm:p-4 lg:p-5 flex items-center justify-center">
         <div class="text-center text-red-500">
-          <p class="text-sm">Error loading data</p>
+          <p class="text-xs sm:text-sm">Error loading data</p>
           <p class="text-xs mt-1">{error}</p>
         </div>
       </div>
     {/each}
   </div>
 {:else}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-8 lg:mb-10">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-10 mb-6 sm:mb-8 lg:mb-10">
     {#each summaryData as card}
       <!-- Card Wrapper (gaya mengikuti kartu referensi) -->
-      <div class="relative w-full h-[140px] lg:h-[160px] rounded-card bg-white/90 backdrop-blur-sm shadow-soft border border-white/80 p-4 lg:p-5 flex items-start justify-between">
+      <div class="relative w-full h-[120px] sm:h-[140px] lg:h-[160px] rounded-card bg-white/90 backdrop-blur-sm shadow-soft border border-white/80 p-3 sm:p-4 lg:p-5 flex items-start justify-between">
         <!-- Left Text -->
         <div class="h-full flex flex-col justify-between w-full">
           <div>
-            <p class="text-xs lg:text-sm text-slate-500">{card.title}</p>
-            <p class="mt-1 text-lg lg:text-xl xl:text-2xl font-semibold tracking-tight text-slate-900">{card.value}</p>
+            <p class="text-sm sm:text-base text-slate-500">{card.title}</p>
+            <p class="mt-1 text-lg sm:text-xl lg:text-2xl font-semibold tracking-tight text-slate-900">{card.value}</p>
           </div>
-          <div class="flex items-center gap-1 text-xs lg:text-sm font-medium text-emerald-600">
+          <div class="flex items-center gap-1 text-sm sm:text-base font-medium text-emerald-600">
             {#if card.title === 'Bookings Umrah' || card.title === 'Bookings Outbound'}
               <!-- Percentage untuk Umrah dan Outbound -->
-              <Star class="w-3 h-3 lg:w-4 lg:h-4" />
+              <Star class="w-3 h-3 sm:w-3 sm:h-3 lg:w-4 lg:h-4" />
               <span class="text-purple-600">{card.change}</span>
               <span class="text-slate-500 font-normal">{card.subtitle}</span>
             {:else}
               <!-- panah naik untuk card lainnya -->
-              <ArrowUp class="w-3 h-3 lg:w-4 lg:h-4" />
+              <ArrowUp class="w-3 h-3 sm:w-3 sm:h-3 lg:w-4 lg:h-4" />
               <span>{card.change}</span>
               <span class="text-slate-500 font-normal">{card.subtitle}</span>
             {/if}
@@ -250,21 +250,21 @@
 
         <!-- Right Graphic -->
         <div class="relative flex items-center justify-center h-full">
-          <div class="w-8 h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-soft backdrop-blur-sm" style="background-color: var(--color-primary);">
+          <div class="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-soft backdrop-blur-sm" style="background-color: var(--color-primary);">
             {#if card.icon === 'person'}
-              <Users class="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
+              <Users class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
             {:else if card.icon === 'location'}
-              <MapPin class="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
+              <MapPin class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
             {:else if card.icon === 'airplane'}
-              <Plane class="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
+              <Plane class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
             {:else if card.icon === 'trending-up'}
-              <TrendingUp class="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
+              <TrendingUp class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-white" />
             {/if}
           </div>
         </div>
 
         <!-- Lingkaran dekor pinggir kanan (opsional, meniru nuansa halus) -->
-        <div class="pointer-events-none absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 h-12 w-12 lg:h-16 lg:w-16 rounded-full blur-xl" style="background-color: rgba(148, 35, 146, 0.1);"></div>
+        <div class="pointer-events-none absolute -right-2 sm:-right-3 lg:-right-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full blur-xl" style="background-color: rgba(148, 35, 146, 0.1);"></div>
       </div>
     {/each}
   </div>

@@ -136,46 +136,46 @@
   }
 </script>
 
-<div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
+<div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-3 sm:p-4 lg:p-6 border border-white/60">
   <!-- Header dengan ikon -->
-  <div class="flex items-center gap-3 mb-4 sm:mb-6">
-    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-      <MapPin class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
+  <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-6">
+    <div class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+      <MapPin class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-yellow-600" />
     </div>
-    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Tambah Paket Destinasi</h2>
+    <h2 class="text-base sm:text-lg lg:text-xl font-bold text-slate-800">Tambah Paket Destinasi</h2>
   </div>
 
   <!-- Message -->
   {#if message}
-    <div class="mb-4 p-3 rounded-lg {message.includes('berhasil') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+    <div class="mb-3 sm:mb-4 p-2.5 sm:p-3 rounded-lg text-xs sm:text-sm {message.includes('berhasil') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
       {message}
     </div>
   {/if}
 
   <!-- Warning jika tidak ada destinasi -->
   {#if destinations.length === 0}
-    <div class="mb-4 p-3 rounded-lg bg-yellow-100 text-yellow-700 border border-yellow-200">
-      <div class="flex items-center gap-2">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+    <div class="mb-3 sm:mb-4 p-2.5 sm:p-3 rounded-lg bg-yellow-100 text-yellow-700 border border-yellow-200">
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
         </svg>
-        <span class="text-sm font-medium">
+        <span class="text-xs sm:text-sm font-medium">
           Belum ada destinasi tersedia. Silakan tambahkan destinasi terlebih dahulu di card sebelah kiri.
         </span>
       </div>
     </div>
   {/if}
 
-  <form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
+  <form on:submit|preventDefault={handleSubmit} class="space-y-3 sm:space-y-4 lg:space-y-6">
     <!-- Tujuan Destinasi Dropdown -->
     <div class="relative">
-      <label class="block text-sm font-medium text-slate-700 mb-2">
+      <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
         Tujuan Destinasi
       </label>
       <div class="relative">
-        <div class="flex items-center border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-yellow-500 focus-within:border-transparent transition-all duration-200">
+        <div class="flex items-center border border-slate-200 rounded-lg sm:rounded-xl focus-within:ring-2 focus-within:ring-yellow-500 focus-within:border-transparent transition-all duration-200">
           <div class="flex items-center px-3">
-            <Search class="w-4 h-4 text-slate-400" />
+            <Search class="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
           </div>
           <input
             type="text"
@@ -190,28 +190,28 @@
               filterDestinations();
             }}
             placeholder="Cari destinasi..."
-            class="flex-1 px-3 py-2 sm:py-3 border-none outline-none bg-transparent cursor-pointer"
+            class="flex-1 px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border-none outline-none bg-transparent cursor-pointer"
             required
           />
           <button
             type="button"
             on:click={toggleDropdown}
-            class="px-3 py-2 sm:py-2 sm:py-3 hover:bg-slate-50 transition-colors"
+            class="px-3 py-2 sm:py-2.5 lg:py-3 hover:bg-slate-50 transition-colors"
           >
-            <ChevronDown class="w-4 h-4 text-slate-400 {isDropdownOpen ? 'rotate-180' : ''}" />
+            <ChevronDown class="w-3 h-3 sm:w-4 sm:h-4 text-slate-400 {isDropdownOpen ? 'rotate-180' : ''}" />
           </button>
         </div>
         
         <!-- Dropdown Menu -->
         {#if isDropdownOpen}
-          <div class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+          <div class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg sm:rounded-xl shadow-lg max-h-60 overflow-y-auto">
             
             {#if destinations.length === 0}
-              <div class="px-4 py-3 text-slate-500 text-sm">
+              <div class="px-3 sm:px-4 py-2.5 sm:py-3 text-slate-500 text-xs sm:text-sm">
                 Belum ada destinasi tersedia. Silakan tambahkan destinasi terlebih dahulu.
               </div>
             {:else if filteredDestinations.length === 0}
-              <div class="px-4 py-3 text-slate-500 text-sm">
+              <div class="px-3 sm:px-4 py-2.5 sm:py-3 text-slate-500 text-xs sm:text-sm">
                 Tidak ada destinasi yang cocok dengan pencarian
               </div>
             {:else}
@@ -219,9 +219,9 @@
                 <button
                   type="button"
                   on:click={() => selectDestination(destination)}
-                  class="w-full px-4 py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0"
+                  class="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0"
                 >
-                  <div class="font-medium text-slate-800">{destination.name}</div>
+                  <div class="font-medium text-slate-800 text-xs sm:text-sm">{destination.name}</div>
                 </button>
               {/each}
             {/if}
@@ -232,7 +232,7 @@
       <!-- Selected Destination Display -->
       {#if selectedDestination}
         <div class="mt-2 p-2 bg-yellow-50 rounded-lg">
-          <div class="text-sm text-yellow-800">
+          <div class="text-xs sm:text-sm text-yellow-800">
             <span class="font-medium">Dipilih:</span> {selectedDestination.name}
           </div>
         </div>
@@ -240,9 +240,9 @@
     </div>
 
     <!-- Start Date dan End Date -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
       <div>
-        <label for="startDate" class="block text-sm font-medium text-slate-700 mb-2">
+        <label for="startDate" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
           Tanggal Mulai
         </label>
         <input
@@ -250,11 +250,11 @@
           type="date"
           bind:value={packageData.start_date}
           required
-          class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+          class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
         />
       </div>
       <div>
-        <label for="endDate" class="block text-sm font-medium text-slate-700 mb-2">
+        <label for="endDate" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
           Tanggal Selesai
         </label>
         <input
@@ -262,14 +262,14 @@
           type="date"
           bind:value={packageData.end_date}
           required
-          class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+          class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
         />
       </div>
     </div>
 
     <!-- Price -->
     <div>
-      <label for="price" class="block text-sm font-medium text-slate-700 mb-2">
+      <label for="price" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
         Harga (RM)
       </label>
       <input
@@ -279,7 +279,7 @@
         required
         placeholder="Contoh: 5000000"
         min="0"
-        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+        class="w-full px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
       />
     </div>
 
@@ -287,9 +287,16 @@
     <button
       type="submit"
       disabled={loading}
-      class="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg"
+      class="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 text-sm sm:text-base rounded-lg sm:rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg"
     >
-      {loading ? 'Membuat Paket...' : 'Buat Paket Destinasi'}
+      {#if loading}
+        <div class="flex items-center justify-center gap-1.5 sm:gap-2">
+          <div class="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span class="text-xs sm:text-sm">Membuat Paket...</span>
+        </div>
+      {:else}
+        <span class="text-xs sm:text-sm">Buat Paket Destinasi</span>
+      {/if}
     </button>
   </form>
 </div>

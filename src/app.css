@@ -4,3 +4,281 @@
 
 /* Import Custom Theme */
 @import './lib/theme/theme.css';
+
+/* Write your global styles here, in PostCSS syntax */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS untuk responsivitas yang lebih baik */
+@layer utilities {
+  /* Responsive text sizes */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl;
+  }
+  
+  /* Responsive spacing */
+  .space-responsive-xs {
+    @apply space-y-1 sm:space-y-2;
+  }
+  
+  .space-responsive-sm {
+    @apply space-y-2 sm:space-y-3;
+  }
+  
+  .space-responsive-base {
+    @apply space-y-3 sm:space-y-4;
+  }
+  
+  .space-responsive-lg {
+    @apply space-y-4 sm:space-y-6;
+  }
+  
+  /* Responsive padding */
+  .p-responsive-sm {
+    @apply p-2 sm:p-3;
+  }
+  
+  .p-responsive-base {
+    @apply p-3 sm:p-4;
+  }
+  
+  .p-responsive-lg {
+    @apply p-4 sm:p-6;
+  }
+  
+  .p-responsive-xl {
+    @apply p-6 sm:p-8;
+  }
+  
+  /* Responsive margins */
+  .m-responsive-sm {
+    @apply m-2 sm:m-3;
+  }
+  
+  .m-responsive-base {
+    @apply m-3 sm:m-4;
+  }
+  
+  .m-responsive-lg {
+    @apply m-4 sm:m-6;
+  }
+  
+  .m-responsive-xl {
+    @apply m-6 sm:m-8;
+  }
+  
+  /* Responsive gaps */
+  .gap-responsive-xs {
+    @apply gap-2 sm:gap-3;
+  }
+  
+  .gap-responsive-sm {
+    @apply gap-3 sm:gap-4;
+  }
+  
+  .gap-responsive-base {
+    @apply gap-4 sm:gap-6;
+  }
+  
+  .gap-responsive-lg {
+    @apply gap-6 sm:gap-8;
+  }
+  
+  .gap-responsive-xl {
+    @apply gap-8 sm:gap-10;
+  }
+  
+  /* Responsive heights */
+  .h-responsive-sm {
+    @apply h-[120px] sm:h-[140px];
+  }
+  
+  .h-responsive-base {
+    @apply h-[140px] sm:h-[160px];
+  }
+  
+  .h-responsive-lg {
+    @apply h-[160px] sm:h-[180px];
+  }
+  
+  .h-responsive-xl {
+    @apply h-[180px] sm:h-[200px];
+  }
+  
+  /* Responsive widths */
+  .w-responsive-sm {
+    @apply w-16 sm:w-20;
+  }
+  
+  .w-responsive-base {
+    @apply w-20 sm:w-24;
+  }
+  
+  .w-responsive-lg {
+    @apply w-24 sm:w-28;
+  }
+  
+  .w-responsive-xl {
+    @apply w-28 sm:w-32;
+  }
+  
+  /* Mobile-first responsive utilities */
+  .mobile-first {
+    @apply block sm:hidden;
+  }
+  
+  .tablet-up {
+    @apply hidden sm:block;
+  }
+  
+  .desktop-up {
+    @apply hidden lg:block;
+  }
+  
+  /* Responsive grid columns */
+  .grid-responsive-1 {
+    @apply grid-cols-1;
+  }
+  
+  .grid-responsive-2 {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+  
+  .grid-responsive-3 {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  .grid-responsive-4 {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+  
+  /* Mobile top padding untuk hamburger menu */
+  .mobile-top-padding {
+    @apply pt-16 sm:pt-4;
+  }
+  
+  .mobile-top-padding-lg {
+    @apply pt-20 sm:pt-4;
+  }
+  
+  /* Hamburger menu spacing */
+  .hamburger-safe-area {
+    @apply pt-16 sm:pt-4;
+  }
+  
+  .hamburger-safe-area-lg {
+    @apply pt-20 sm:pt-4;
+  }
+}
+
+/* Custom scrollbar untuk mobile */
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 35, 146, 0.3);
+    border-radius: 2px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 35, 146, 0.5);
+  }
+}
+
+/* Touch-friendly interactions untuk mobile */
+@media (max-width: 640px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Optimasi untuk tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-optimized {
+    font-size: 0.95rem;
+  }
+  
+  .tablet-spacing {
+    padding: 1rem;
+    margin: 1rem;
+  }
+}
+
+/* Optimasi untuk mobile landscape */
+@media (max-width: 896px) and (orientation: landscape) {
+  .mobile-landscape {
+    padding: 0.5rem;
+    margin: 0.5rem;
+  }
+  
+  .mobile-landscape h1 {
+    font-size: 1.5rem;
+  }
+  
+  .mobile-landscape h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Hamburger menu safe area */
+@media (max-width: 1023px) {
+  .hamburger-safe {
+    padding-top: 4rem; /* 64px untuk hamburger button */
+  }
+  
+  .hamburger-safe-lg {
+    padding-top: 5rem; /* 80px untuk hamburger button + extra space */
+  }
+}
+
+/* Hamburger button positioning */
+.hamburger-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
+}
+
+/* Mobile content safe area */
+.mobile-content-safe {
+  padding-top: 4rem;
+}
+
+@media (min-width: 640px) {
+  .mobile-content-safe {
+    padding-top: 1rem;
+  }
+}

@@ -79,25 +79,25 @@
   });
 </script>
 
-<div class="bg-white/90 backdrop-blur-sm rounded-card shadow-soft border border-white/80 p-3 lg:p-5 xl:p-7 h-[600px] lg:h-[650px]">
+<div class="bg-white/90 backdrop-blur-sm rounded-card shadow-soft border border-white/80 p-3 sm:p-4 lg:p-5 xl:p-7 h-[500px] sm:h-[550px] lg:h-[650px]">
   <!-- Header -->
-  <div class="flex items-center justify-between mb-4 lg:mb-6">
-    <h2 class="text-base lg:text-lg xl:text-xl font-bold text-slate-900">Top Sales Consultant</h2>
+  <div class="flex items-center justify-between mb-3 sm:mb-4 lg:mb-6">
+    <h2 class="text-base sm:text-lg lg:text-xl font-bold text-slate-900">Top Sales Consultant</h2>
     
 
   </div>
   
   <!-- Loading State -->
   {#if loading}
-    <div class="flex items-center justify-center h-32">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+    <div class="flex items-center justify-center h-24 sm:h-32">
+      <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-green-500"></div>
     </div>
   {:else if error}
-    <div class="text-center p-4">
-      <p class="text-red-500 text-sm">{error}</p>
+    <div class="text-center p-3 sm:p-4">
+      <p class="text-red-500 text-xs sm:text-sm">{error}</p>
       <button 
         on:click={loadTopSalesData}
-        class="mt-2 px-3 py-1 bg-red-100 text-red-700 rounded-md text-sm hover:bg-red-200"
+        class="mt-2 px-2 py-1 sm:px-3 sm:py-1 bg-red-100 text-red-700 rounded-md text-xs sm:text-sm hover:bg-red-200"
       >
         Coba Lagi
       </button>
@@ -149,7 +149,7 @@
               
               <!-- Name and Recent Activity -->
               <div class="min-w-0 flex-1">
-                <h3 class="text-slate-900 font-bold text-xs lg:text-sm xl:text-base truncate">{item.name}</h3>
+                <h3 class="text-slate-900 font-bold text-sm sm:text-base lg:text-lg truncate">{item.name}</h3>
                 {#if item.recent > 0}
                   <p class="text-green-600 text-xs">+{item.recent} booking 30 hari terakhir</p>
                 {/if}
@@ -158,8 +158,8 @@
             
                          <!-- Total Bookings -->
              <div class="text-right flex-shrink-0">
-               <p class="text-slate-900 font-bold text-sm lg:text-base xl:text-lg">{item.total}</p>
-               <p class="text-slate-500 text-xs lg:text-sm">Total Bookings</p>
+               <p class="text-slate-900 font-bold text-sm sm:text-base lg:text-lg">{item.total}</p>
+               <p class="text-slate-500 text-sm sm:text-base">Total Bookings</p>
              </div>
           </div>
         </div>

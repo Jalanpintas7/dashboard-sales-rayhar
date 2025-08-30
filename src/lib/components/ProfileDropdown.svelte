@@ -85,24 +85,24 @@
   <!-- Profile Button -->
   <button
     on:click={toggleDropdown}
-    class="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200"
+    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-colors duration-200"
     style="background-color: {themeColors.primary};"
     aria-label="Profile menu"
   >
-    <User class="w-5 h-5 text-white" />
+    <User class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
   </button>
   
   <!-- Dropdown Menu -->
   {#if isOpen}
-    <div class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+    <div class="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
       <!-- Profile Header -->
-      <div class="p-4 rounded-t-lg" style="background-color: {themeColors.primary};">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: {themeColors.primary};">
-            <User class="w-6 h-6 text-white" />
+      <div class="p-3 sm:p-4 rounded-t-lg" style="background-color: {themeColors.primary};">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center" style="background-color: {themeColors.primary};">
+            <User class="w-4 h-4 sm:w-6 sm:h-6 text-white" />
           </div>
           <div>
-            <p class="text-sm font-semibold text-white">
+            <p class="text-xs sm:text-sm font-semibold text-white">
               {$user?.email || 'User'}
             </p>
             <p class="text-xs text-white opacity-80">
@@ -115,13 +115,13 @@
 
       
       <!-- Logout Button -->
-      <div class="px-4 py-3 border-t border-gray-200">
+      <div class="px-3 sm:px-4 py-3 border-t border-gray-200">
         <button
           on:click={handleLogout}
-          class="w-full flex items-center justify-center px-4 py-2 text-white rounded-md transition-colors duration-150"
+          class="w-full flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2 text-white rounded-md transition-colors duration-150 text-sm"
           style="background-color: {themeColors.primary};"
         >
-          <LogOut class="w-4 h-4 mr-2" />
+          <LogOut class="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
           Logout
         </button>
       </div>

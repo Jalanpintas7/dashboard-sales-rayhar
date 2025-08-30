@@ -177,41 +177,41 @@
   });
 </script>
 
-<div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
-  <div class="flex items-center gap-3 mb-4 sm:mb-6">
-    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-xl flex items-center justify-center">
-      <Building2 class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+<div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-3 sm:p-4 lg:p-6 border border-white/60">
+  <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-6">
+    <div class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-green-100 rounded-xl flex items-center justify-center">
+      <Building2 class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-green-600" />
     </div>
-    <h2 class="text-lg sm:text-xl font-bold text-slate-800">Buat Paket Umrah Baru</h2>
+    <h2 class="text-base sm:text-lg lg:text-xl font-bold text-slate-800">Buat Paket Umrah Baru</h2>
   </div>
 
   <!-- Error Display -->
   {#if error}
-    <div class="mb-4 p-3 bg-red-100 text-red-800 border border-red-200 rounded-lg">
+    <div class="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-red-100 text-red-800 border border-red-200 rounded-lg text-xs sm:text-sm">
       {error}
     </div>
   {/if}
 
   <!-- Submit Message Display -->
   {#if submitMessage}
-    <div class="mb-4 p-3 rounded-lg {submitMessageType === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}">
+    <div class="mb-3 sm:mb-4 p-2.5 sm:p-3 rounded-lg text-xs sm:text-sm {submitMessageType === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}">
       {submitMessage}
     </div>
   {/if}
 
   <!-- Loading State -->
   {#if isLoading}
-    <div class="flex items-center justify-center py-8">
-      <div class="flex items-center gap-2 text-slate-600">
-        <Loader2 class="animate-spin h-5 w-5" />
-        Memuat data musim, kategori, dan airlines...
+    <div class="flex items-center justify-center py-6 sm:py-8">
+      <div class="flex items-center gap-1.5 sm:gap-2 text-slate-600">
+        <Loader2 class="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
+        <span class="text-xs sm:text-sm">Memuat data musim, kategori, dan airlines...</span>
       </div>
     </div>
   {:else}
-    <form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
+    <form on:submit|preventDefault={handleSubmit} class="space-y-3 sm:space-y-4 lg:space-y-6">
       <!-- Nama Paket -->
       <div>
-        <label for="namaPaket" class="block text-sm font-medium text-slate-700 mb-2">
+        <label for="namaPaket" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
           Nama Paket *
         </label>
         <input
@@ -220,21 +220,21 @@
           bind:value={packageData.namaPaket}
           required
           placeholder="Contoh: Paket Umrah Ramadhan Premium 2024"
-          class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+          class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
         />
       </div>
 
       <!-- Musim dan Kategori -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label for="musimId" class="block text-sm font-medium text-slate-700 mb-2">
+          <label for="musimId" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
             Pilih Musim *
           </label>
           <select
             id="musimId"
             bind:value={packageData.musimId}
             required
-            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
           >
             <option value="">Pilih Musim</option>
             {#each seasons as season}
@@ -246,14 +246,14 @@
         </div>
 
         <div>
-          <label for="kategoriId" class="block text-sm font-medium text-slate-700 mb-2">
+          <label for="kategoriId" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
             Pilih Kategori *
           </label>
           <select
             id="kategoriId"
             bind:value={packageData.kategoriId}
             required
-            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
           >
             <option value="">Pilih Kategori</option>
             {#each categories as category}
@@ -268,9 +268,9 @@
       
 
       <!-- Tanggal Berangkat dan Kembali -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label for="tanggalBerangkat" class="block text-sm font-medium text-slate-700 mb-2">
+          <label for="tanggalBerangkat" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
             Tanggal Berangkat *
           </label>
           <input
@@ -278,12 +278,12 @@
             type="date"
             bind:value={packageData.tanggalBerangkat}
             required
-            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
           />
         </div>
 
         <div>
-          <label for="tanggalKembali" class="block text-sm font-medium text-slate-700 mb-2">
+          <label for="tanggalKembali" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
             Tanggal Kembali *
           </label>
           <input
@@ -291,22 +291,22 @@
             type="date"
             bind:value={packageData.tanggalKembali}
             required
-            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
           />
         </div>
       </div>
 
       <!-- Airline dan Flight Name -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label for="airline" class="block text-sm font-medium text-slate-700 mb-2">
+          <label for="airline" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
             Pilih Airline *
           </label>
           <select
             id="airline"
             bind:value={packageData.airline}
             required
-            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
           >
             <option value="">Pilih Airline</option>
             {#each airlines as airline}
@@ -318,7 +318,7 @@
         </div>
 
         <div>
-          <label for="flightName" class="block text-sm font-medium text-slate-700 mb-2">
+          <label for="flightName" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
             Nama Penerbangan
           </label>
           <input
@@ -326,7 +326,7 @@
             type="text"
             bind:value={packageData.flightName}
             placeholder="Contoh: MH1234"
-            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
           />
         </div>
       </div>
@@ -335,10 +335,10 @@
 
       <!-- Harga Bilik -->
       <div>
-        <h4 class="font-medium text-slate-800 mb-4">Harga Berdasarkan Tipe Bilik:</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h4 class="font-medium text-slate-800 mb-3 sm:mb-4 text-sm sm:text-base">Harga Berdasarkan Tipe Bilik:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div>
-            <label for="hargaDouble" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaDouble" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga Double Room
             </label>
             <input
@@ -347,7 +347,7 @@
               bind:value={packageData.hargaDouble}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaDouble > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaDouble)}</p>
@@ -355,7 +355,7 @@
           </div>
 
           <div>
-            <label for="hargaTriple" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaTriple" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga Triple Room
             </label>
             <input
@@ -364,7 +364,7 @@
               bind:value={packageData.hargaTriple}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaTriple > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaTriple)}</p>
@@ -372,7 +372,7 @@
           </div>
 
           <div>
-            <label for="hargaQuadruple" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaQuadruple" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga Quadruple Room
             </label>
             <input
@@ -381,7 +381,7 @@
               bind:value={packageData.hargaQuadruple}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaQuadruple > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaQuadruple)}</p>
@@ -389,7 +389,7 @@
           </div>
 
           <div>
-            <label for="hargaQuintuple" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaQuintuple" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga Quintuple Room
             </label>
             <input
@@ -398,7 +398,7 @@
               bind:value={packageData.hargaQuintuple}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaQuintuple > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaQuintuple)}</p>
@@ -409,10 +409,10 @@
 
       <!-- Harga Anak dan Infant -->
       <div>
-        <h4 class="font-medium text-slate-800 mb-4">Harga Anak dan Infant:</h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h4 class="font-medium text-slate-800 mb-3 sm:mb-4 text-sm sm:text-base">Harga Anak dan Infant:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
           <div>
-            <label for="hargaCWB" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaCWB" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga CWB (Child With Bed)
             </label>
             <input
@@ -421,7 +421,7 @@
               bind:value={packageData.hargaCWB}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaCWB > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaCWB)}</p>
@@ -429,7 +429,7 @@
           </div>
 
           <div>
-            <label for="hargaCNB" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaCNB" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga CNB (Child No Bed)
             </label>
             <input
@@ -438,7 +438,7 @@
               bind:value={packageData.hargaCNB}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaCNB > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaCNB)}</p>
@@ -446,7 +446,7 @@
           </div>
 
           <div>
-            <label for="hargaInfant" class="block text-sm font-medium text-slate-700 mb-2">
+            <label for="hargaInfant" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
               Harga Infant
             </label>
             <input
@@ -455,7 +455,7 @@
               bind:value={packageData.hargaInfant}
               min="0"
               placeholder="0"
-              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              class="w-full px-3 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base border border-slate-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
             />
             {#if packageData.hargaInfant > 0}
               <p class="text-xs text-slate-500 mt-1">{formatCurrency(packageData.hargaInfant)}</p>
@@ -470,18 +470,15 @@
       <button
         type="submit"
         disabled={isSubmitting}
-        class="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
+        class="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-400 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 text-sm sm:text-base rounded-lg sm:rounded-xl transition-colors duration-200 shadow-soft hover:shadow-lg disabled:cursor-not-allowed"
       >
         {#if isSubmitting}
-          <div class="flex items-center justify-center gap-2">
-            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Menyimpan...
+          <div class="flex items-center justify-center gap-1.5 sm:gap-2">
+            <div class="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-xs sm:text-sm">Menyimpan...</span>
           </div>
         {:else}
-          Buat Paket Umrah
+          <span class="text-xs sm:text-sm">Buat Paket Umrah</span>
         {/if}
       </button>
     </form>

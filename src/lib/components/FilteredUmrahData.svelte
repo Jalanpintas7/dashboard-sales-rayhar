@@ -32,7 +32,9 @@
     quadruple: '',
     triple: '',
     double: '',
-    sektor: '',
+    cwb: '',
+    cnb: '',
+    infant: '',
     airline_id: '',
     umrah_season_id: '',
     umrah_category_id: ''
@@ -91,7 +93,9 @@
          quadruple: selectedItem.quadruple || '',
          triple: selectedItem.triple || '',
          double: selectedItem.double || '',
-         sektor: selectedItem.sektor || '',
+         cwb: selectedItem.cwb || '',
+         cnb: selectedItem.cnb || '',
+         infant: selectedItem.infant || '',
          airline_id: selectedItem.airline_id || '',
          umrah_season_id: selectedItem.umrah_season_id || '',
          umrah_category_id: selectedItem.umrah_category_id || ''
@@ -197,7 +201,9 @@
        quadruple: '',
        triple: '',
        double: '',
-       sektor: '',
+       cwb: '',
+       cnb: '',
+       infant: '',
        airline_id: '',
        umrah_season_id: '',
        umrah_category_id: ''
@@ -239,11 +245,13 @@
            .update({
              start_date: editForm.start_date,
              end_date: editForm.end_date,
-             sektor: editForm.sektor,
              quintuple: editForm.quintuple ? parseFloat(editForm.quintuple) : null,
              quadruple: editForm.quadruple ? parseFloat(editForm.quadruple) : null,
              triple: editForm.triple ? parseFloat(editForm.triple) : null,
-             double: editForm.double ? parseFloat(editForm.double) : null
+             double: editForm.double ? parseFloat(editForm.double) : null,
+             cwb: editForm.cwb ? parseFloat(editForm.cwb) : null,
+             cnb: editForm.cnb ? parseFloat(editForm.cnb) : null,
+             infant: editForm.infant ? parseFloat(editForm.infant) : null
            })
            .eq('id', selectedItem.id)
            .select();
@@ -388,21 +396,21 @@
 <div class="bg-white rounded-2xl shadow-soft border border-white/60 overflow-hidden">
   <!-- Tab Navigation -->
   <div class="border-b border-slate-100">
-    <nav class="flex space-x-8 px-6">
+    <nav class="flex space-x-4 sm:space-x-8 px-3 sm:px-6">
       <button
-        class="py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab === 'seasons' ? 'border-purple-500 text-purple-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
+        class="py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-200 {activeTab === 'seasons' ? 'border-purple-500 text-purple-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
         on:click={() => activeTab = 'seasons'}
       >
         Musim ({seasons.length})
       </button>
       <button
-        class="py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab === 'categories' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
+        class="py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-200 {activeTab === 'categories' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
         on:click={() => activeTab = 'categories'}
       >
         Kategori ({categories.length})
       </button>
       <button
-        class="py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 {activeTab === 'packages' ? 'border-green-500 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
+        class="py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-200 {activeTab === 'packages' ? 'border-green-500 text-green-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}"
         on:click={() => activeTab = 'packages'}
       >
         Paket ({packages.length})
@@ -411,41 +419,41 @@
   </div>
 
   <!-- Tab Content -->
-  <div class="p-6">
+  <div class="p-3 sm:p-6">
     {#if isLoading}
-      <div class="flex items-center justify-center py-12">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span class="ml-3 text-slate-600">Memuat data...</span>
+      <div class="flex items-center justify-center py-8 sm:py-12">
+        <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
+        <span class="ml-2 sm:ml-3 text-xs sm:text-sm text-slate-600">Memuat data...</span>
       </div>
     {:else if activeTab === 'seasons' && seasons.length === 0}
-      <div class="text-center py-12">
-        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="text-center py-8 sm:py-12">
+        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-slate-900 mb-2">Tidak ada data musim</h3>
-        <p class="text-slate-500">Coba ubah filter pencarian Anda</p>
+        <h3 class="text-base sm:text-lg font-medium text-slate-900 mb-1 sm:mb-2">Tidak ada data musim</h3>
+        <p class="text-xs sm:text-sm text-slate-500">Coba ubah filter pencarian Anda</p>
       </div>
     {:else if activeTab === 'categories' && categories.length === 0}
-      <div class="text-center py-12">
-        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="text-center py-8 sm:py-12">
+        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-slate-900 mb-2">Tidak ada data kategori</h3>
-        <p class="text-slate-500">Coba ubah filter pencarian Anda</p>
+        <h3 class="text-base sm:text-lg font-medium text-slate-900 mb-1 sm:mb-2">Tidak ada data kategori</h3>
+        <p class="text-xs sm:text-sm text-slate-500">Coba ubah filter pencarian Anda</p>
       </div>
     {:else if activeTab === 'packages' && packages.length === 0}
-      <div class="text-center py-12">
-        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="text-center py-8 sm:py-12">
+        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-slate-900 mb-2">Tidak ada data paket</h3>
-        <p class="text-slate-500">Coba ubah filter pencarian Anda</p>
+        <h3 class="text-base sm:text-lg font-medium text-slate-900 mb-1 sm:mb-2">Tidak ada data paket</h3>
+        <p class="text-xs sm:text-sm text-slate-500">Coba ubah filter pencarian Anda</p>
       </div>
     {:else}
       <!-- Seasons Table -->
@@ -454,49 +462,49 @@
           <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Musim</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Musim</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-200">
               {#each paginatedSeasons as season}
                 <tr class="hover:bg-slate-50">
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                      <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div class="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-2 sm:mr-3">
+                        <svg class="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
                         </svg>
                       </div>
                       <div>
-                        <div class="text-sm font-medium text-slate-900">{season.name}</div>
+                        <div class="text-xs sm:text-sm font-medium text-slate-900">{season.name}</div>
                       </div>
                     </div>
                   </td>
 
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-slate-500">
                     {formatDate(season.created_at)}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                    <div class="flex space-x-1.5 sm:space-x-2">
                       <button
                         on:click={() => handleView('season', season.id)}
                         class="text-blue-600 hover:text-blue-900"
                       >
-                        <Eye class="w-4 h-4" />
+                        <Eye class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         on:click={() => handleEdit('season', season.id)}
                         class="text-green-600 hover:text-green-900"
                       >
-                        <Edit class="w-4 h-4" />
+                        <Edit class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         on:click={() => handleDelete('season', season.id)}
                         class="text-red-600 hover:text-red-900"
                       >
-                        <Trash2 class="w-4 h-4" />
+                        <Trash2 class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>
@@ -508,39 +516,41 @@
 
         <!-- Pagination for Seasons -->
         {#if totalPagesSeasons > 1}
-          <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200">
-            <div class="flex items-center text-sm text-slate-700">
-              <span>Menampilkan {startIndexSeasons + 1} - {Math.min(endIndexSeasons, totalSeasons)} dari {totalSeasons} data</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button
-                on:click={goToPreviousPage}
-                disabled={currentPage === 1}
-                class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft class="w-4 h-4" />
-              </button>
-              
-              {#each getPageNumbers() as page}
-                {#if page === '...'}
-                  <span class="px-3 py-2 text-slate-400">...</span>
-                {:else}
-                  <button
-                    on:click={() => goToPage(page)}
-                    class="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
-                  >
-                    {page}
-                  </button>
-                {/if}
-              {/each}
-              
-              <button
-                on:click={goToNextPage}
-                disabled={currentPage === totalPagesSeasons}
-                class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight class="w-4 h-4" />
-              </button>
+          <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex items-center text-xs sm:text-sm text-slate-700">
+                <span>Menampilkan {startIndexSeasons + 1} - {Math.min(endIndexSeasons, totalSeasons)} dari {totalSeasons} data</span>
+              </div>
+              <div class="flex items-center justify-center sm:justify-end space-x-2">
+                <button
+                  on:click={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+                
+                {#each getPageNumbers() as page}
+                  {#if page === '...'}
+                    <span class="px-2 sm:px-3 py-2 text-slate-400 text-xs sm:text-sm">...</span>
+                  {:else}
+                    <button
+                      on:click={() => goToPage(page)}
+                      class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
+                    >
+                      {page}
+                    </button>
+                  {/if}
+                {/each}
+                
+                <button
+                  on:click={goToNextPage}
+                  disabled={currentPage === totalPagesSeasons}
+                  class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+              </div>
             </div>
           </div>
         {/if}
@@ -552,49 +562,49 @@
           <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Kategori</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Kategori</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Dibuat</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-200">
               {#each paginatedCategories as category}
                 <tr class="hover:bg-slate-50">
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                      <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div class="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-2 sm:mr-3">
+                        <svg class="w-3 h-3 sm:w-4 sm:h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                         </svg>
                       </div>
                       <div>
-                        <div class="text-sm font-medium text-slate-900">{category.name}</div>
+                        <div class="text-xs sm:text-sm font-medium text-slate-900">{category.name}</div>
                       </div>
                     </div>
                   </td>
 
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-slate-500">
                     {formatDate(category.created_at)}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                    <div class="flex space-x-1.5 sm:space-x-2">
                       <button
                         on:click={() => handleView('category', category.id)}
                         class="text-blue-600 hover:text-blue-900"
                       >
-                        <Eye class="w-4 h-4" />
+                        <Eye class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         on:click={() => handleEdit('category', category.id)}
                         class="text-green-600 hover:text-green-900"
                       >
-                        <Edit class="w-4 h-4" />
+                        <Edit class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         on:click={() => handleDelete('category', category.id)}
                         class="text-red-600 hover:text-red-900"
                       >
-                        <Trash2 class="w-4 h-4" />
+                        <Trash2 class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>
@@ -606,39 +616,41 @@
 
         <!-- Pagination for Categories -->
         {#if totalPagesCategories > 1}
-          <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200">
-            <div class="flex items-center text-sm text-slate-700">
-              <span>Menampilkan {startIndexCategories + 1} - {Math.min(endIndexCategories, totalCategories)} dari {totalCategories} data</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button
-                on:click={goToPreviousPage}
-                disabled={currentPage === 1}
-                class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft class="w-4 h-4" />
-              </button>
-              
-              {#each getPageNumbers() as page}
-                {#if page === '...'}
-                  <span class="px-3 py-2 text-slate-400">...</span>
-                {:else}
-                  <button
-                    on:click={() => goToPage(page)}
-                    class="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-yellow-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
-                  >
-                    {page}
-                  </button>
-                {/if}
-              {/each}
-              
-              <button
-                on:click={goToNextPage}
-                disabled={currentPage === totalPagesCategories}
-                class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight class="w-4 h-4" />
-              </button>
+          <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex items-center text-xs sm:text-sm text-slate-700">
+                <span>Menampilkan {startIndexCategories + 1} - {Math.min(endIndexCategories, totalCategories)} dari {totalCategories} data</span>
+              </div>
+              <div class="flex items-center justify-center sm:justify-end space-x-2">
+                <button
+                  on:click={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+                
+                {#each getPageNumbers() as page}
+                  {#if page === '...'}
+                    <span class="px-2 sm:px-3 py-2 text-slate-400 text-xs sm:text-sm">...</span>
+                  {:else}
+                    <button
+                      on:click={() => goToPage(page)}
+                      class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-yellow-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
+                    >
+                      {page}
+                    </button>
+                  {/if}
+                {/each}
+                
+                <button
+                  on:click={goToNextPage}
+                  disabled={currentPage === totalPagesCategories}
+                  class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+              </div>
             </div>
           </div>
         {/if}
@@ -650,61 +662,61 @@
           <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Paket</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Periode</th>
-                                 <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga Double</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Paket</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Periode</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Harga Double</th>
+                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-200">
               {#each paginatedPackages as umrahPackage}
                 <tr class="hover:bg-slate-50">
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                      <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div class="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center mr-2 sm:mr-3">
+                        <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21v-4a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v4"/>
                         </svg>
                       </div>
                       <div>
-                        <div class="text-sm font-medium text-slate-900">
+                        <div class="text-xs sm:text-sm font-medium text-slate-900">
                           {umrahPackage.umrah_seasons?.name || 'N/A'} - {umrahPackage.umrah_categories?.name || 'N/A'}
                         </div>
-                        <div class="text-sm text-slate-500">
+                        <div class="text-xs sm:text-sm text-slate-500">
                           {umrahPackage.airlines?.name || 'N/A'}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-slate-500">
                     <div>
                       <div>{formatDate(umrahPackage.start_date)}</div>
                       <div class="text-xs text-slate-400">s/d {formatDate(umrahPackage.end_date)}</div>
                     </div>
                   </td>
-                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                     {formatCurrency(umrahPackage.double || 0)}
-                   </td>
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-slate-900">
+                    {formatCurrency(umrahPackage.double || 0)}
+                  </td>
 
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
+                  <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                    <div class="flex space-x-1.5 sm:space-x-2">
                       <button
                         on:click={() => handleView('package', umrahPackage.id)}
                         class="text-blue-600 hover:text-blue-900"
                       >
-                        <Eye class="w-4 h-4" />
+                        <Eye class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         on:click={() => handleEdit('package', umrahPackage.id)}
                         class="text-green-600 hover:text-green-900"
                       >
-                        <Edit class="w-4 h-4" />
+                        <Edit class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         on:click={() => handleDelete('package', umrahPackage.id)}
                         class="text-red-600 hover:text-red-900"
                       >
-                        <Trash2 class="w-4 h-4" />
+                        <Trash2 class="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>
@@ -716,39 +728,41 @@
 
         <!-- Pagination for Packages -->
         {#if totalPagesPackages > 1}
-          <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200">
-            <div class="flex items-center text-sm text-slate-700">
-              <span>Menampilkan {startIndexPackages + 1} - {Math.min(endIndexPackages, totalPackages)} dari {totalPackages} data</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button
-                on:click={goToPreviousPage}
-                disabled={currentPage === 1}
-                class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft class="w-4 h-4" />
-              </button>
-              
-              {#each getPageNumbers() as page}
-                {#if page === '...'}
-                  <span class="px-3 py-2 text-slate-400">...</span>
-                {:else}
-                  <button
-                    on:click={() => goToPage(page)}
-                    class="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-green-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
-                  >
-                    {page}
-                  </button>
-                {/if}
-              {/each}
-              
-              <button
-                on:click={goToNextPage}
-                disabled={currentPage === totalPagesPackages}
-                class="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight class="w-4 h-4" />
-              </button>
+          <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex items-center text-xs sm:text-sm text-slate-700">
+                <span>Menampilkan {startIndexPackages + 1} - {Math.min(endIndexPackages, totalPackages)} dari {totalPackages} data</span>
+              </div>
+              <div class="flex items-center justify-center sm:justify-end space-x-2">
+                <button
+                  on:click={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+                
+                {#each getPageNumbers() as page}
+                  {#if page === '...'}
+                    <span class="px-2 sm:px-3 py-2 text-slate-400 text-xs sm:text-sm">...</span>
+                  {:else}
+                    <button
+                      on:click={() => goToPage(page)}
+                      class="px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-green-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
+                    >
+                      {page}
+                    </button>
+                  {/if}
+                {/each}
+                
+                <button
+                  on:click={goToNextPage}
+                  disabled={currentPage === totalPagesPackages}
+                  class="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+              </div>
             </div>
           </div>
         {/if}
@@ -894,13 +908,6 @@
                   </p>
                 </div>
                 
-
-                
-                <div>
-                  <p class="text-sm text-gray-500">Sektor</p>
-                  <p class="text-gray-900">{selectedItem.sektor || 'N/A'}</p>
-                </div>
-                
                 <div>
                   <p class="text-sm text-gray-500">Maskapai</p>
                   <p class="text-gray-900">{selectedItem.airlines?.name || 'N/A'}</p>
@@ -961,6 +968,37 @@
                  <div class="bg-purple-50 p-4 rounded-lg">
                    <p class="text-sm text-gray-500">Double</p>
                    <p class="text-lg font-semibold text-purple-700">{formatCurrency(selectedItem.double)}</p>
+                 </div>
+               {/if}
+             </div>
+           </div>
+
+           <!-- Harga Kategori Khusus -->
+           <div class="space-y-4">
+             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+               <DollarSign class="w-5 h-5 text-orange-600" />
+               Harga Kategori Khusus
+             </h3>
+             
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+               {#if selectedItem.cwb}
+                 <div class="bg-orange-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">CWB (Child With Bed)</p>
+                   <p class="text-lg font-semibold text-orange-700">{formatCurrency(selectedItem.cwb)}</p>
+                 </div>
+               {/if}
+               
+               {#if selectedItem.cnb}
+                 <div class="bg-red-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">CNB (Child No Bed)</p>
+                   <p class="text-lg font-semibold text-red-700">{formatCurrency(selectedItem.cnb)}</p>
+                 </div>
+               {/if}
+               
+               {#if selectedItem.infant}
+                 <div class="bg-pink-50 p-4 rounded-lg">
+                   <p class="text-sm text-gray-500">Infant</p>
+                   <p class="text-lg font-semibold text-pink-700">{formatCurrency(selectedItem.infant)}</p>
                  </div>
                {/if}
              </div>
@@ -1088,20 +1126,7 @@
                 </div>
               </div>
               
-              <div>
-                <label for="editSektor" class="block text-sm font-medium text-gray-700 mb-2">
-                  Sektor
-                </label>
-                <input
-                  id="editSektor"
-                  type="text"
-                  bind:value={editForm.sektor}
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Masukkan sektor"
-                />
-              </div>
-              
-                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                  <div>
                    <label for="editQuintuple" class="block text-sm font-medium text-gray-700 mb-2">
                      Harga Quintuple
@@ -1149,6 +1174,48 @@
                      id="editDouble"
                      type="number"
                      bind:value={editForm.double}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+               </div>
+
+               <!-- Harga Kategori Khusus -->
+               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div>
+                   <label for="editCwb" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga CWB (Child With Bed)
+                   </label>
+                   <input
+                     id="editCwb"
+                     type="number"
+                     bind:value={editForm.cwb}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+                 
+                 <div>
+                   <label for="editCnb" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga CNB (Child No Bed)
+                   </label>
+                   <input
+                     id="editCnb"
+                     type="number"
+                     bind:value={editForm.cnb}
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                     placeholder="0"
+                   />
+                 </div>
+                 
+                 <div>
+                   <label for="editInfant" class="block text-sm font-medium text-gray-700 mb-2">
+                     Harga Infant
+                   </label>
+                   <input
+                     id="editInfant"
+                     type="number"
+                     bind:value={editForm.infant}
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                      placeholder="0"
                    />

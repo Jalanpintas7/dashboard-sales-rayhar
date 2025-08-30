@@ -142,26 +142,26 @@
 
 <div class="bg-white rounded-xl shadow-soft border border-white/60 overflow-hidden">
   <!-- Header Tabel -->
-  <div class="px-6 py-4 border-b border-gray-100">
-    <div class="flex items-center justify-between mb-4">
+  <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
+    <div class="flex items-center justify-between mb-3 sm:mb-4">
     </div>
     
     <!-- Filter Bar -->
-    <div class="flex flex-wrap gap-4 items-center">
+    <div class="space-y-3 sm:space-y-0 sm:flex sm:flex-wrap sm:gap-3 sm:items-center">
       <!-- Search Input -->
-      <div class="flex-1 min-w-64">
+      <div class="flex-1 min-w-0">
         <input
           type="text"
           bind:value={searchTerm}
           placeholder="Cari nama..."
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
       </div>
       
       <!-- Package Filter -->
       <select
         bind:value={packageFilter}
-        class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        class="w-full sm:w-40 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
       >
         <option value="">Semua Paket</option>
         {#each uniquePackages as packageType}
@@ -172,7 +172,7 @@
       <!-- Branch Filter -->
       <select
         bind:value={branchFilter}
-        class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        class="w-full sm:w-40 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
       >
         <option value="">Semua Cawangan</option>
         {#each uniqueBranches as branch}
@@ -183,7 +183,7 @@
       <!-- Reset Button -->
       <button
         on:click={resetFilters}
-        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+        class="w-full sm:w-auto px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
       >
         Reset
       </button>
@@ -226,19 +226,19 @@
       <table class="w-full">
         <thead class="bg-gray-50 border-b border-gray-100">
           <tr>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               PELANGGAN
             </th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               CAWANGAN
             </th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               PAKEJ
             </th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
              MUSIM/DESTINASI
             </th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               TARIKH
             </th>
           </tr>
@@ -247,41 +247,41 @@
           {#each paginatedCustomers as customer}
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" on:click={() => showCustomerDetail(customer)}>
               <!-- Kolom PELANGGAN -->
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
-                    <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                      <span class="text-sm font-medium text-purple-600">
+                  <div class="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                    <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                      <span class="text-xs sm:text-sm font-medium text-purple-600">
                         {customer.avatar}
                       </span>
                     </div>
                   </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{customer.name}</div>
+                  <div class="ml-2 sm:ml-4">
+                    <div class="text-xs sm:text-sm font-medium text-gray-900">{customer.name}</div>
                   </div>
                 </div>
               </td>
               
               <!-- Kolom CAWANGAN -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{customer.branch}</div>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                <div class="text-xs sm:text-sm text-gray-900">{customer.branch}</div>
               </td>
               
               <!-- Kolom PAKEJ -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border {getPackageColor(customer.package)}">
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium border {getPackageColor(customer.package)}">
                   {customer.package}
                 </span>
               </td>
               
               <!-- Kolom DESTINASI -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{customer.seasonDestination || customer.category || '-'}</div>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                <div class="text-xs sm:text-sm text-gray-900">{customer.seasonDestination || customer.category || '-'}</div>
               </td>
               
               <!-- Kolom TARIKH -->
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{customer.date}</div>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                <div class="text-xs sm:text-sm text-gray-900">{customer.date}</div>
               </td>
             </tr>
           {/each}
@@ -291,27 +291,27 @@
     
                    <!-- Pagination -->
       {#if totalPages > 1}
-        <div class="px-6 py-4 border-t border-gray-100">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center text-sm text-gray-700">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-center text-xs sm:text-sm text-gray-700">
               <span>Menampilkan {startIndex + 1} - {Math.min(endIndex, filteredCustomers.length)} dari {filteredCustomers.length} data</span>
             </div>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center justify-center sm:justify-end space-x-2">
               <button
                 on:click={prevPage}
                 disabled={currentPage === 1}
-                class="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronLeft class="w-4 h-4" />
+                <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
               
               {#each getPageNumbers() as page}
                 {#if page === '...'}
-                  <span class="px-3 py-2 text-gray-400">...</span>
+                  <span class="px-2 sm:px-3 py-2 text-gray-400 text-xs sm:text-sm">...</span>
                 {:else}
                   <button
                     on:click={() => goToPage(page)}
-                    class="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'text-gray-700 hover:bg-gray-100'}"
+                    class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'text-gray-700 hover:bg-gray-100'}"
                   >
                     {page}
                   </button>
@@ -321,9 +321,9 @@
               <button
                 on:click={nextPage}
                 disabled={currentPage === totalPages}
-                class="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronRight class="w-4 h-4" />
+                <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             </div>
           </div>

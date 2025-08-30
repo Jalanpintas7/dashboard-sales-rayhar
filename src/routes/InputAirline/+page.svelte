@@ -156,19 +156,19 @@
 </script>
 
 <RoleGuard allowedRoles={["super_admin"]} redirectTo="/login">
-  <div class="p-3 sm:p-6 space-y-4 sm:space-y-6">
+  <div class="p-2 sm:p-3 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
     <!-- Header Halaman -->
-    <div class="mb-6 sm:mb-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+    <div class="mb-4 sm:mb-6">
+      <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mb-1 sm:mb-2">
         Manajemen Airline
       </h1>
-      <p class="text-sm sm:text-base text-slate-600">
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
         Kelola data airline
       </p>
     </div>
 
     <!-- Layout Grid -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3 sm:gap-4 lg:gap-8">
       <!-- Form Input Airline -->
       <div>
         <AirlineInputCard on:airlineAdded={handleAirlineAdded} />
@@ -176,18 +176,18 @@
       
       <!-- Data Table List Airline -->
       <div>
-        <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-4 sm:p-6 border border-white/60">
-          <div class="flex items-center gap-3 mb-4 sm:mb-6">
-            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 sm:w-5 sm:h-5 text-green-600">
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-soft p-3 sm:p-4 lg:p-6 border border-white/60">
+          <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-6">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-green-100 rounded-xl flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-green-600">
                 <path d="M3 3h18v18H3zM9 9h6v6H9z"/>
               </svg>
             </div>
-            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Daftar Airline</h2>
+            <h2 class="text-base sm:text-lg lg:text-xl font-bold text-slate-800">Daftar Airline</h2>
           </div>
 
           {#if error}
-            <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-800 border border-red-200">
+            <div class="mb-3 sm:mb-4 p-2.5 sm:p-3 rounded-lg bg-red-100 text-red-800 border border-red-200 text-xs sm:text-sm">
               {error}
               <button 
                 on:click={fetchAirlines}
@@ -199,50 +199,50 @@
           {/if}
 
           {#if loadingAirlines}
-            <div class="flex items-center justify-center py-8">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div class="flex items-center justify-center py-6 sm:py-8">
+              <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
             </div>
           {:else if airlines.length === 0}
-            <div class="text-center py-8 text-slate-500">
-              <p>Belum ada data airline</p>
+            <div class="text-center py-6 sm:py-8 text-slate-500">
+              <p class="text-xs sm:text-sm">Belum ada data airline</p>
             </div>
           {:else}
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead>
                   <tr class="border-b border-slate-200">
-                    <th class="text-left py-3 px-4 font-semibold text-slate-700">No</th>
-                    <th class="text-left py-3 px-4 font-semibold text-slate-700">Nama Airline</th>
-                    <th class="text-left py-3 px-4 font-semibold text-slate-700">Aksi</th>
+                    <th class="text-left py-2 sm:py-3 px-3 sm:px-4 font-semibold text-xs sm:text-sm text-slate-700">No</th>
+                    <th class="text-left py-2 sm:py-3 px-3 sm:px-4 font-semibold text-xs sm:text-sm text-slate-700">Nama Airline</th>
+                    <th class="text-left py-2 sm:py-3 px-3 sm:px-4 font-semibold text-xs sm:text-sm text-slate-700">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {#each airlines as airline, index}
                     <tr class="border-b border-slate-100 hover:bg-slate-50">
-                      <td class="py-3 px-4 text-slate-600">{index + 1}</td>
-                      <td class="py-3 px-4 font-medium text-slate-800">{airline.name}</td>
-                      <td class="py-3 px-4">
-                        <div class="flex items-center gap-2">
+                      <td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-slate-600">{index + 1}</td>
+                      <td class="py-2 sm:py-3 px-3 sm:px-4 font-medium text-xs sm:text-sm text-slate-800">{airline.name}</td>
+                      <td class="py-2 sm:py-3 px-3 sm:px-4">
+                        <div class="flex items-center gap-1.5 sm:gap-2">
                           <button
                             on:click={() => openEditModal(airline)}
-                            class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors duration-200"
+                            class="inline-flex items-center px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors duration-200"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 mr-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1">
                               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                               <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
-                            Edit
+                            <span class="text-xs">Edit</span>
                           </button>
                           <button
                             on:click={() => openDeleteModal(airline)}
-                            class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-red-700 bg-red-100 hover:bg-red-200 rounded-lg transition-colors duration-200"
+                            class="inline-flex items-center px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-medium text-red-700 bg-red-100 hover:bg-red-200 rounded-lg transition-colors duration-200"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3 mr-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1">
                               <path d="M3 6h18"/>
                               <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
                               <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
                             </svg>
-                            Hapus
+                            <span class="text-xs">Hapus</span>
                           </button>
                         </div>
                       </td>
