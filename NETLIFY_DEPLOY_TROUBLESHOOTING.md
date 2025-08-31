@@ -22,6 +22,18 @@
 - Periksa error di console
 - Pastikan semua dependencies terinstall
 
+### 4. Node.js Version Compatibility Error
+**Gejala**: 
+```
+npm error notsup Required: {"node":"^20.19 || ^22.12 || >=24"}
+npm error notsup Actual:   {"npm":"10.8.2","node":"v18.20.8"}
+```
+
+**Solusi**:
+- Update `netlify.toml` dengan `NODE_VERSION = "20"`
+- Buat file `.nvmrc` dengan isi `20`
+- SvelteKit v2 + Svelte v5 + Vite v7 membutuhkan Node.js 20+
+
 ## File Konfigurasi yang Diperlukan
 
 ### netlify.toml
@@ -31,7 +43,12 @@
   publish = ".svelte-kit/netlify"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
+```
+
+### .nvmrc
+```
+20
 ```
 
 ### _redirects
@@ -72,6 +89,7 @@
 | Build error | Jalankan `npm run build` lokal |
 | Routing error | Periksa file `_redirects` |
 | Assets tidak load | Periksa file `_headers` dan caching |
+| Node.js version error | Update `NODE_VERSION = "20"` di netlify.toml |
 
 ## Support
 Jika masih ada masalah, periksa:
@@ -79,3 +97,4 @@ Jika masih ada masalah, periksa:
 - Network tab untuk failed requests
 - Build logs di Netlify dashboard
 - File konfigurasi sudah benar dan ada di folder build
+- Versi Node.js yang digunakan (harus 20+ untuk SvelteKit v2)
