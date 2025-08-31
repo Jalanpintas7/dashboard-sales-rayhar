@@ -65,7 +65,7 @@
     <!-- Logo dan Header -->
     <div class="text-center">
       <div class="mx-auto w-40 bg-gradient-to-r from-primary-600 to-primary-700 rounded-full flex items-center justify-center mb-4" style="--tw-gradient-from: {themeColors.primary}; --tw-gradient-to: {themeColors.primary}88;">
-                 <img src="/rayhar-logo.svg" alt="Logo Rayhar" class="w-32 h-32" />
+                 <img src="/logorayharsvg.svg" alt="Logo Rayhar" class="w-32 h-32" />
       </div>
       <h2 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang</h2>
       <p class="text-gray-600">Masuk ke dashboard admin Rayhar</p>

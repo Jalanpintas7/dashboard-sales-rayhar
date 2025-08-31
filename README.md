@@ -75,10 +75,10 @@ Lihat file `SUPABASE_SETUP.md` untuk panduan lengkap setup database.
 
 ### Logo Tidak Muncul
 Jika logo Rayhar tidak muncul:
-1. Pastikan file logo ada di folder `static/`
-2. Gunakan logo yang lebih sederhana (`rayhar-logo.svg`)
-3. Test dengan file `static/test-logo.html`
-4. Periksa console browser untuk error
+1. Pastikan file logo asli `logorayharsvg.svg` ada di folder `static/`
+2. Test dengan file `static/test-logo.html`
+3. Periksa console browser untuk error
+4. Verifikasi path `/logorayharsvg.svg` bisa diakses
 
 ### Build Error
 1. Hapus folder `node_modules` dan `package-lock.json`

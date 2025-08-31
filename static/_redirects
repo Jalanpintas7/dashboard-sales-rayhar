@@ -1,0 +1,6 @@
+# Netlify redirects untuk SPA routing
+/*    /index.html   200
+
+# Pastikan file static bisa diakses
+/logorayharsvg.svg    /logorayharsvg.svg   200
+/favicon.svg          /favicon.svg         200
