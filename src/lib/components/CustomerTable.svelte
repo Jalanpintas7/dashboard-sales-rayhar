@@ -16,6 +16,7 @@
   let searchTerm = '';
   let packageFilter = '';
   let branchFilter = '';
+  let inquiryFilter = '';
   
   // State untuk modal detail
   let selectedCustomer = null;
@@ -44,6 +45,11 @@
     }
     if (packageFilter && customer.package !== packageFilter) return false;
     if (branchFilter && customer.branch !== branchFilter) return false;
+    if (inquiryFilter !== '') {
+      const isFromInquiry = customer.from_inquiry === true;
+      if (inquiryFilter === 'true' && !isFromInquiry) return false;
+      if (inquiryFilter === 'false' && isFromInquiry) return false;
+    }
     return true;
   });
   
@@ -115,6 +121,7 @@
     searchTerm = '';
     packageFilter = '';
     branchFilter = '';
+    inquiryFilter = '';
     currentPage = 1;
   }
   
@@ -135,7 +142,7 @@
   $: uniqueBranches = [...new Set(customersData.map(c => c.branch))];
   
   // Reset currentPage ketika filter berubah
-  $: if (searchTerm || packageFilter || branchFilter) {
+  $: if (searchTerm || packageFilter || branchFilter || inquiryFilter) {
     currentPage = 1;
   }
 </script>
@@ -178,6 +185,16 @@
         {#each uniqueBranches as branch}
           <option value={branch}>{branch}</option>
         {/each}
+      </select>
+
+      <!-- Inquiry Filter -->
+      <select
+        bind:value={inquiryFilter}
+        class="w-full sm:w-40 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+      >
+        <option value="">Semua Dari Inquiry</option>
+        <option value="true">Ya</option>
+        <option value="false">Tidak</option>
       </select>
       
       <!-- Reset Button -->
