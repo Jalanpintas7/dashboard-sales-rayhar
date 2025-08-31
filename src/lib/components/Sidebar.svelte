@@ -19,8 +19,8 @@
     UserCheck
   } from 'lucide-svelte';
   
-  // Props untuk sidebar (tidak digunakan, dihapus untuk menghindari warning)
-  // export let isCollapsed = false;
+  // Props untuk sidebar
+  export let isCollapsed = false;
   
   // Menu items dengan ikon yang tepat sesuai gambar
   const menuItemsData = [
@@ -82,9 +82,6 @@
   <div 
     class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
     on:click={closeMobile}
-    role="button"
-    tabindex="0"
-    on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? closeMobile() : null}
   ></div>
 {/if}
 
@@ -111,7 +108,7 @@
       
       <!-- Logo + Brand -->
       <div class="flex items-center gap-3">
-        <img src="/logorayharsvg.svg" alt="Rayhar Logo" class="w-16 h-16" />
+        <img src="/src/lib/assets/logorayharsvg.svg" alt="Rayhar Logo" class="w-16 h-16" />
         <div>
           <div class="text-2xl font-extrabold tracking-tight text-slate-800">Rayhar</div>
           <div class="text-xs text-slate-500">Admin Dashboard</div>
@@ -209,7 +206,7 @@
     <!-- Logo + Brand -->
     <div class="flex items-center gap-4 mb-8">
       <!-- Logo Rayhar -->
-      <img src="/logorayharsvg.svg" alt="Rayhar Logo" width="100" />
+      <img src="/src/lib/assets/logorayharsvg.svg" alt="Rayhar Logo" width="100" />
       <div>
         <div class="text-3xl font-extrabold tracking-tight text-slate-800">Rayhar</div>
         <div class="text-sm -mt-0.5 text-slate-400">Admin Dashboard</div>

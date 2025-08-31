@@ -266,7 +266,6 @@
           <button
             on:click={closeEditModal}
             class="text-slate-400 hover:text-slate-600 transition-colors"
-            aria-label="Tutup modal edit"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
               <path d="M18 6 6 18M6 6l12 12"/>
@@ -366,7 +365,6 @@
         <button
           on:click={() => showToastNotification = false}
           class="ml-2 p-1 rounded-full hover:bg-white/20 transition-colors"
-          aria-label="Tutup notifikasi"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
             <path d="M18 6 6 18M6 6l12 12"/>

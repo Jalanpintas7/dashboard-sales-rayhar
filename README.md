@@ -1,90 +1,108 @@
-# Dashboard Admin Rayhar
+# Rayhar Admin Dashboard
 
-Dashboard admin untuk manajemen data umrah, pelanggan, dan destinasi wisata.
+Dashboard admin modern untuk mengelola bisnis travel dan umrah dengan antarmuka yang elegan dan responsif.
 
-## 🚀 Quick Start
+## Fitur Utama
 
-### Development
-```bash
-npm install
-npm run dev
+### 🏠 Dashboard
+- Ringkasan data penjualan dan inquiry
+- Grafik performa bisnis
+- Top sales dan inquiry
+- Package top sales
+
+### 👥 Pelanggan
+- Tabel data pelanggan lengkap
+- Informasi detail: nama, email, telepon, cabang
+- Data paket dan kategori perjalanan
+- Status pemesanan (Confirmed, Pending, Cancelled)
+- Harga dan tanggal pemesanan
+- Pagination dan fitur pencarian
+
+### ⚙️ Fitur Lainnya
+- Pengaturan sistem
+- Input musim & kategori
+- Data umrah
+- Manajemen destinasi
+- Data destinasi
+
+## Teknologi
+
+- **Frontend**: SvelteKit
+- **Styling**: Tailwind CSS
+- **Icons**: Heroicons
+- **Responsive**: Mobile-first design
+
+## Struktur Proyek
+
+```
+src/
+├── lib/
+│   ├── components/
+│   │   ├── CustomerTable.svelte    # Tabel pelanggan
+│   │   ├── Sidebar.svelte          # Navigasi sidebar
+│   │   ├── SummaryCards.svelte     # Kartu ringkasan
+│   │   └── ...
+│   ├── assets/                     # Gambar dan ikon
+│   └── theme/                      # Konfigurasi tema
+├── routes/
+│   ├── +layout.svelte              # Layout utama
+│   ├── +page.svelte                # Halaman dashboard
+│   └── Pelanggan/
+│       └── +page.svelte            # Halaman pelanggan
+└── app.css                         # Styles global
 ```
 
-### Build
-```bash
-npm run build
-npm run preview
-```
+## Cara Menjalankan
 
-## 🎯 Fitur Utama
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- **Dashboard Super Admin** - Manajemen lengkap sistem
-- **Dashboard Admin Branch** - Manajemen cabang
-- **Data Pelanggan** - CRUD data pelanggan
-- **Data Umrah** - Manajemen paket umrah
-- **Data Destinasi** - Manajemen destinasi wisata
-- **Input Airline** - Manajemen maskapai
-- **Input Musim & Kategori** - Manajemen musim dan kategori umrah
+2. Jalankan development server:
+   ```bash
+   npm run dev
+   ```
 
-## 🔧 Konfigurasi
+3. Buka browser dan akses `http://localhost:5173`
 
-### Environment Variables
-Buat file `.env.local` dengan konfigurasi Supabase:
-```env
-PUBLIC_SUPABASE_URL=your_supabase_url
-PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+## Navigasi
 
-### Supabase Setup
-Lihat file `SUPABASE_SETUP.md` untuk panduan lengkap setup database.
+- **Dashboard**: Halaman utama dengan ringkasan data
+- **Pelanggan**: Kelola data pelanggan dan pemesanan
+- **Pengaturan**: Konfigurasi sistem
+- **Input Musim & Kategori**: Manajemen kategori paket
+- **Data Umrah**: Data khusus paket umrah
+- **Destinasi**: Manajemen lokasi tujuan
+- **Data Destinasi**: Detail informasi destinasi
 
-## 📱 Deployment
+## Fitur Tabel Pelanggan
 
-### Netlify
-1. Push code ke repository
-2. Connect ke Netlify
-3. Build command: `npm run build`
-4. Publish directory: `build`
+Tabel pelanggan menampilkan informasi lengkap tentang:
 
-**⚠️ Catatan Penting**: Logo Rayhar sudah diperbaiki untuk deployment ke Netlify. Lihat `NETLIFY_DEPLOYMENT.md` untuk detail lengkap.
+- **PELANGGAN**: Nama, email, dan nomor telepon dengan avatar inisial
+- **CAWANGAN**: Cabang kantor
+- **PAKEJ**: Jenis paket (Umrah/Pelancongan) dengan warna yang berbeda
+- **KATEGORI**: Detail paket perjalanan
+- **STATUS**: Status pemesanan dengan indikator warna
+- **HARGA**: Harga paket dalam RM
+- **TARIKH**: Tanggal pemesanan
 
-## 🎨 UI Components
+## Responsivitas
 
-- **Sidebar** - Navigasi utama dengan logo Rayhar
-- **Summary Cards** - Kartu ringkasan data
-- **Data Tables** - Tabel data dengan fitur filter dan search
-- **Form Inputs** - Form input yang responsif
+Dashboard dirancang responsif untuk berbagai ukuran layar:
+- **Mobile**: Sidebar collapsible dengan overlay
+- **Tablet**: Layout adaptif
+- **Desktop**: Sidebar tetap dengan navigasi lengkap
 
-## 🛠️ Tech Stack
+## Pengembangan
 
-- **Frontend**: SvelteKit 5 + Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
-- **Icons**: Lucide Svelte
-- **Charts**: Chart.js
-- **Deployment**: Netlify
+Proyek menggunakan SvelteKit dengan fitur:
+- File-based routing
+- Component-based architecture
+- Reactive state management
+- Modern CSS dengan Tailwind
 
-## 📚 Dokumentasi
+---
 
-- `AUTH_README.md` - Sistem autentikasi
-- `UMRAH_README.md` - Fitur manajemen umrah
-- `CUSTOMER_FILTER_README.md` - Filter pelanggan
-- `NETLIFY_DEPLOYMENT.md` - Panduan deployment ke Netlify
-- `SUPABASE_SETUP.md` - Setup database Supabase
-
-## 🐛 Troubleshooting
-
-### Logo Tidak Muncul
-Jika logo Rayhar tidak muncul:
-1. Pastikan file logo asli `logorayharsvg.svg` ada di folder `static/`
-2. Test dengan file `static/test-logo.html`
-3. Periksa console browser untuk error
-4. Verifikasi path `/logorayharsvg.svg` bisa diakses
-
-### Build Error
-1. Hapus folder `node_modules` dan `package-lock.json`
-2. Jalankan `npm install` ulang
-3. Pastikan Node.js version 18+
-
-## 📄 License
-
-© 2024 Rayhar. All rights reserved.
+© 2024 Rayhar Admin Dashboard. Made with ❤️ by pixeluniverce

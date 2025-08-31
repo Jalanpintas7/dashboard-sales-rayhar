@@ -117,9 +117,6 @@
           " 
           style="background-color: #ffffff !important;"
           on:click={() => showConsultantDetail(item)}
-          role="button"
-          tabindex="0"
-          on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? showConsultantDetail(item) : null}
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2 lg:space-x-3 xl:space-x-4">
@@ -183,7 +180,6 @@
         <button 
           on:click={closeDetailModal}
           class="text-slate-400 hover:text-slate-600 p-1"
-          aria-label="Tutup modal detail"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

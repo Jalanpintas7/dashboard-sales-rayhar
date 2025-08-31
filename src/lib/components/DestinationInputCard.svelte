@@ -169,7 +169,7 @@
   <form on:submit|preventDefault={handleSubmit} class="space-y-3 sm:space-y-4 lg:space-y-6">
     <!-- Tujuan Destinasi Dropdown -->
     <div class="relative">
-      <label for="destinationSearch" class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
+      <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-2">
         Tujuan Destinasi
       </label>
       <div class="relative">
@@ -178,7 +178,6 @@
             <Search class="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" />
           </div>
           <input
-            id="destinationSearch"
             type="text"
             bind:value={searchQuery}
             on:input={handleSearchInput}
@@ -304,11 +303,5 @@
 
 <!-- Click outside to close dropdown -->
 {#if isDropdownOpen}
-  <div 
-    class="fixed inset-0 z-40" 
-    on:click={() => isDropdownOpen = false}
-    role="button"
-    tabindex="0"
-    on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? isDropdownOpen = false : null}
-  ></div>
+  <div class="fixed inset-0 z-40" on:click={() => isDropdownOpen = false}></div>
 {/if}
