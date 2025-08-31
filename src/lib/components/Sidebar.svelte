@@ -108,7 +108,7 @@
       
       <!-- Logo + Brand -->
       <div class="flex items-center gap-3">
-        <img src="/src/lib/assets/logorayharsvg.svg" alt="Rayhar Logo" class="w-16 h-16" />
+        <img src="/logorayharsvg.svg" alt="Rayhar Logo" class="w-16 h-16" />
         <div>
           <div class="text-2xl font-extrabold tracking-tight text-slate-800">Rayhar</div>
           <div class="text-xs text-slate-500">Admin Dashboard</div>
@@ -206,7 +206,7 @@
     <!-- Logo + Brand -->
     <div class="flex items-center gap-4 mb-8">
       <!-- Logo Rayhar -->
-      <img src="/src/lib/assets/logorayharsvg.svg" alt="Rayhar Logo" width="100" />
+      <img src="/logorayharsvg.svg" alt="Rayhar Logo" width="100" />
       <div>
         <div class="text-3xl font-extrabold tracking-tight text-slate-800">Rayhar</div>
         <div class="text-sm -mt-0.5 text-slate-400">Admin Dashboard</div>
