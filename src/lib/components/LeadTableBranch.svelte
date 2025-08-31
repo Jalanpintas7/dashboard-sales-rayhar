@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { getInitials } from '$lib/data/customers.js';
-  import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText, TrendingUp } from 'lucide-svelte';
+  import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-svelte';
   import { user } from '$lib/stores/auth.js';
   import { supabase } from '$lib/supabase.js';
   
@@ -12,6 +12,10 @@
   
   let selectedLead = null;
   let showDetailModal = false;
+  
+  // State untuk pagination
+  let currentPage = 1;
+  let itemsPerPage = 10;
   
   onMount(async () => {
     try {
@@ -33,10 +37,16 @@
         userBranch = userProfile.branches.name;
         
         if (userBranch) {
-          const { leadsData: sampleData } = await import('$lib/data/leads.js');
-          leadsData = sampleData.filter(lead => 
-            lead.branch === userBranch
-          );
+          // Gunakan fungsi fetchLeadsDataByBranch untuk mengambil data real-time
+          const branchData = await fetchLeadsDataByBranch(userBranch);
+          
+          if (branchData && branchData.length > 0) {
+            leadsData = branchData;
+          } else {
+            // Jika tidak ada data, set array kosong
+            leadsData = [];
+            console.log(`Tidak ada data lead untuk branch: ${userBranch}`);
+          }
         } else {
           error = 'Branch tidak ditemukan';
         }
@@ -49,6 +59,92 @@
     }
   });
   
+  // Fungsi untuk mengambil data lead berdasarkan branch tertentu
+  async function fetchLeadsDataByBranch(branchName) {
+    try {
+      console.log('Fetching leads for branch:', branchName);
+      
+      // Query yang efisien dengan join langsung ke branches
+      const { data, error } = await supabase
+        .from('leads')
+        .select(`
+          id,
+          title,
+          full_name,
+          phone,
+          branch_id,
+          season_id,
+          category_id,
+          created_at,
+          package_type_id,
+          destination_id,
+          outbound_date_id,
+          category,
+          branches!inner(name),
+          umrah_seasons(name),
+          umrah_categories(name),
+          package_types(name),
+          destinations(name),
+          outbound_dates(start_date, end_date)
+        `)
+        .eq('branches.name', branchName)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching leads by branch:', error);
+        return [];
+      }
+
+      console.log('Raw data from Supabase for branch:', branchName, data);
+      console.log('Number of leads found:', data?.length || 0);
+
+      // Transform data untuk kompatibilitas dengan komponen yang ada
+      return data.map(lead => {
+        // Tentukan interest berdasarkan data yang tersedia
+        let interest = '-';
+        if (lead.umrah_seasons?.name) {
+          interest = lead.umrah_seasons.name;
+        } else if (lead.umrah_categories?.name) {
+          interest = lead.umrah_categories.name;
+        } else if (lead.destinations?.name) {
+          interest = lead.destinations.name;
+        } else if (lead.package_types?.name) {
+          interest = lead.package_types.name;
+        }
+
+        return {
+          id: lead.id,
+          name: lead.full_name || lead.title || 'Nama tidak tersedia',
+          email: '-', // Email tidak ada di tabel leads
+          phone: lead.phone || '-',
+          branch: lead.branches?.name || '-',
+          interest: interest,
+          date: new Date(lead.created_at).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          }),
+          avatar: getInitials(lead.full_name || lead.title || 'NA'),
+          address: '-', // Address tidak ada di tabel leads
+          source: lead.category || '-',
+          budget: '-', // Budget tidak ada di tabel leads
+          timeline: '-', // Timeline tidak ada di tabel leads
+          consultant: '-', // Consultant tidak ada di tabel leads
+          notes: '-', // Notes tidak ada di tabel leads
+          // Tambahan field untuk detail
+          seasonDestination: interest,
+          packageType: lead.package_types?.name || '-',
+          destination: lead.destinations?.name || '-',
+          outboundDate: lead.outbound_dates ? 
+            `${lead.outbound_dates.start_date} - ${lead.outbound_dates.end_date}` : '-'
+        };
+      });
+    } catch (error) {
+      console.error('Error in fetchLeadsDataByBranch:', error);
+      return [];
+    }
+  }
+  
   function showLeadDetail(lead) {
     selectedLead = lead;
     showDetailModal = true;
@@ -57,6 +153,68 @@
   function closeDetailModal() {
     showDetailModal = false;
     selectedLead = null;
+  }
+  
+  // Pagination
+  $: totalPages = Math.ceil(leadsData.length / itemsPerPage);
+  $: startIndex = (currentPage - 1) * itemsPerPage;
+  $: endIndex = startIndex + itemsPerPage;
+  $: paginatedLeads = leadsData.slice(startIndex, endIndex);
+  
+  // Fungsi untuk halaman berikutnya
+  function nextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+    }
+  }
+  
+  // Fungsi untuk halaman sebelumnya
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+    }
+  }
+
+  // Fungsi untuk pergi ke halaman tertentu
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+    }
+  }
+
+  // Generate page numbers for pagination
+  function getPageNumbers() {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
   }
   
 
@@ -91,7 +249,12 @@
         <TrendingUp class="mx-auto h-12 w-12" />
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data lead</h3>
-      <p class="text-gray-500">Belum ada data lead untuk branch ini.</p>
+      <p class="text-gray-500 mb-4">Belum ada data lead untuk branch <strong>{userBranch}</strong>.</p>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+        <p class="text-sm text-blue-800">
+          <strong>Tips:</strong> Data lead akan muncul setelah ada inquiry yang dibuat untuk branch ini.
+        </p>
+      </div>
     </div>
   {:else}
     <div class="overflow-x-auto">
@@ -110,7 +273,7 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-100">
-          {#each leadsData as lead}
+          {#each paginatedLeads as lead}
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" on:click={() => showLeadDetail(lead)}>
               <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                 <div class="flex items-center">
@@ -142,6 +305,47 @@
         </tbody>
       </table>
     </div>
+    
+    <!-- Pagination -->
+    {#if totalPages > 1}
+      <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center text-xs sm:text-sm text-gray-700">
+            <span>Menampilkan {startIndex + 1} - {Math.min(endIndex, leadsData.length)} dari {leadsData.length} data</span>
+          </div>
+          <div class="flex items-center justify-center sm:justify-end space-x-2">
+            <button
+              on:click={prevPage}
+              disabled={currentPage === 1}
+              class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
+            
+            {#each getPageNumbers() as page}
+              {#if page === '...'}
+                <span class="px-2 sm:px-3 py-2 text-gray-400 text-xs sm:text-sm">...</span>
+              {:else}
+                <button
+                  on:click={() => goToPage(page)}
+                  class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}"
+                >
+                  {page}
+                </button>
+                {/if}
+            {/each}
+            
+            <button
+              on:click={nextPage}
+              disabled={currentPage === totalPages}
+              class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    {/if}
   {/if}
 </div>
 

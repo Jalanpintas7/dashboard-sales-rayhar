@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { fetchCustomersDataByBranch, getInitials, getPackageColor } from '$lib/data/customers.js';
-  import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText } from 'lucide-svelte';
+  import { Loader2, AlertTriangle, Users, X, Phone, Mail, MapPin, Calendar, User, Building, Package, Globe, Hash, FileText, ChevronLeft, ChevronRight } from 'lucide-svelte';
   import { user } from '$lib/stores/auth.js';
   import { supabase } from '$lib/supabase.js';
   
@@ -13,6 +13,10 @@
   // State untuk modal detail
   let selectedCustomer = null;
   let showDetailModal = false;
+  
+  // State untuk pagination
+  let currentPage = 1;
+  let itemsPerPage = 10;
   
   onMount(async () => {
     try {
@@ -34,15 +38,18 @@
         
         userBranch = userProfile.branches.name;
         
-        if (userBranch) {
-          // Gunakan data sample dan filter berdasarkan branch yang login
-          const { customersData: sampleData } = await import('$lib/data/customers.js');
-          
-          // Filter berdasarkan branch yang login
-          customersData = sampleData.filter(customer => 
-            customer.branch === userBranch
-          );
-        } else {
+                  if (userBranch) {
+            // Gunakan fungsi fetchCustomersDataByBranch untuk mengambil data real-time
+            const branchData = await fetchCustomersDataByBranch(userBranch);
+            
+            if (branchData && branchData.length > 0) {
+              customersData = branchData;
+            } else {
+              // Jika tidak ada data, set array kosong
+              customersData = [];
+              console.log(`Tidak ada data pelanggan untuk branch: ${userBranch}`);
+            }
+          } else {
           error = 'Branch tidak ditemukan';
         }
       }
@@ -64,6 +71,68 @@
   function closeDetailModal() {
     showDetailModal = false;
     selectedCustomer = null;
+  }
+  
+  // Pagination
+  $: totalPages = Math.ceil(customersData.length / itemsPerPage);
+  $: startIndex = (currentPage - 1) * itemsPerPage;
+  $: endIndex = startIndex + itemsPerPage;
+  $: paginatedCustomers = customersData.slice(startIndex, endIndex);
+  
+  // Fungsi untuk halaman berikutnya
+  function nextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+    }
+  }
+  
+  // Fungsi untuk halaman sebelumnya
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+    }
+  }
+
+  // Fungsi untuk pergi ke halaman tertentu
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+    }
+  }
+
+  // Generate page numbers for pagination
+  function getPageNumbers() {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
   }
 </script>
 
@@ -98,7 +167,12 @@
         <Users class="mx-auto h-12 w-12" />
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada data pelanggan</h3>
-      <p class="text-gray-500">Belum ada data pelanggan untuk branch ini.</p>
+      <p class="text-gray-500 mb-4">Belum ada data pelanggan untuk branch <strong>{userBranch}</strong>.</p>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+        <p class="text-sm text-blue-800">
+          <strong>Tips:</strong> Data pelanggan akan muncul setelah ada booking yang dibuat untuk branch ini.
+        </p>
+      </div>
     </div>
   {:else}
     <!-- Tabel -->
@@ -121,10 +195,13 @@
             <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               TARIKH
             </th>
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              HARGA
+            </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-100">
-          {#each customersData as customer}
+          {#each paginatedCustomers as customer}
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" on:click={() => showCustomerDetail(customer)}>
               <!-- Kolom PELANGGAN -->
               <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -169,11 +246,64 @@
               <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                 <div class="text-xs sm:text-sm text-gray-900">{customer.date}</div>
               </td>
+              
+              <!-- Kolom HARGA -->
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                <div class="text-xs sm:text-sm text-gray-900">
+                  {#if customer.total_price && customer.total_price !== '-'}
+                    <div class="font-medium text-green-600">RM {parseFloat(customer.total_price).toLocaleString('id-ID')}</div>
+                    <div class="text-xs text-gray-500">{customer.price || '-'}</div>
+                  {:else}
+                    <div class="text-gray-500">{customer.price || '-'}</div>
+                  {/if}
+                </div>
+              </td>
             </tr>
           {/each}
         </tbody>
       </table>
     </div>
+    
+    <!-- Pagination -->
+    {#if totalPages > 1}
+      <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-100">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center text-xs sm:text-sm text-gray-700">
+            <span>Menampilkan {startIndex + 1} - {Math.min(endIndex, customersData.length)} dari {customersData.length} data</span>
+          </div>
+          <div class="flex items-center justify-center sm:justify-end space-x-2">
+            <button
+              on:click={prevPage}
+              disabled={currentPage === 1}
+              class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
+            
+            {#each getPageNumbers() as page}
+              {#if page === '...'}
+                <span class="px-2 sm:px-3 py-2 text-gray-400 text-xs sm:text-sm">...</span>
+              {:else}
+                <button
+                  on:click={() => goToPage(page)}
+                  class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 {currentPage === page ? 'bg-purple-600 text-white' : 'text-gray-700 hover:bg-gray-100'}"
+                >
+                  {page}
+                </button>
+              {/if}
+            {/each}
+            
+            <button
+              on:click={nextPage}
+              disabled={currentPage === totalPages}
+              class="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -346,14 +476,30 @@
           <div class="space-y-4">
             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <FileText class="w-5 h-5 text-green-600" />
-              Harga
+              Harga dan Pembayaran
             </h3>
             
             <div class="space-y-3">
+              {#if selectedCustomer.total_price && selectedCustomer.total_price !== '-'}
+                <div>
+                  <p class="text-sm text-gray-500">Total Harga</p>
+                  <p class="text-2xl font-bold text-green-600">RM {parseFloat(selectedCustomer.total_price).toLocaleString('id-ID')}</p>
+                </div>
+              {/if}
+              
               {#if selectedCustomer.price && selectedCustomer.price !== '-'}
                 <div>
-                  <p class="text-sm text-gray-500">Harga/Bilangan</p>
+                  <p class="text-sm text-gray-500">Jumlah Pax</p>
                   <p class="text-lg font-semibold text-gray-900">{selectedCustomer.price}</p>
+                </div>
+              {/if}
+              
+              {#if selectedCustomer.total_price && selectedCustomer.price && selectedCustomer.total_price !== '-' && selectedCustomer.price !== '-'}
+                <div>
+                  <p class="text-sm text-gray-500">Harga per Pax</p>
+                  <p class="text-lg font-semibold text-gray-700">
+                    RM {(parseFloat(selectedCustomer.total_price) / parseInt(selectedCustomer.price.split(' ')[0])).toLocaleString('id-ID')}
+                  </p>
                 </div>
               {/if}
             </div>

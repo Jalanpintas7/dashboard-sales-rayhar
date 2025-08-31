@@ -259,6 +259,9 @@
               DARI INQUIRY
             </th>
             <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              TOTAL HARGA
+            </th>
+            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               TARIKH
             </th>
           </tr>
@@ -306,6 +309,17 @@
                     <span class="text-green-600">✓</span>
                   {:else}
                     <span class="text-red-600">✗</span>
+                  {/if}
+                </div>
+              </td>
+              
+              <!-- Kolom TOTAL HARGA -->
+              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                <div class="text-xs sm:text-sm text-gray-900">
+                  {#if customer.total_price && customer.total_price !== '-'}
+                    <span class="font-semibold text-green-600">RM {parseFloat(customer.total_price).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  {:else}
+                    <span class="text-gray-400">-</span>
                   {/if}
                 </div>
               </td>
@@ -529,6 +543,13 @@
                 <div>
                   <p class="text-sm text-gray-500">Harga/Bilangan</p>
                   <p class="text-lg font-semibold text-gray-900">{selectedCustomer.price}</p>
+                </div>
+              {/if}
+              
+              {#if selectedCustomer.total_price && selectedCustomer.total_price !== '-'}
+                <div>
+                  <p class="text-sm text-gray-500">Total Harga</p>
+                  <p class="text-2xl font-bold text-green-600">RM {parseFloat(selectedCustomer.total_price).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
               {/if}
             </div>
