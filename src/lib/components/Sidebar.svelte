@@ -19,8 +19,8 @@
     UserCheck
   } from 'lucide-svelte';
   
-  // Props untuk sidebar
-  export let isCollapsed = false;
+  // Props untuk sidebar (tidak digunakan, dihapus untuk menghindari warning)
+  // export let isCollapsed = false;
   
   // Menu items dengan ikon yang tepat sesuai gambar
   const menuItemsData = [
@@ -82,6 +82,9 @@
   <div 
     class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
     on:click={closeMobile}
+    role="button"
+    tabindex="0"
+    on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? closeMobile() : null}
   ></div>
 {/if}
 
