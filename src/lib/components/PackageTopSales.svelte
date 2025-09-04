@@ -1,42 +1,21 @@
 <script>
   import { onMount } from 'svelte';
-  import { getTopPackagesByBranch, getTopPackagesForSuperAdmin, getBranchIdByUser } from '../supabase-helpers.js';
-  import { user, userRole } from '../stores/auth.js';
+  import { getTopPackagesForSuperAdmin } from '../supabase-helpers.js';
 
   let isMenuOpen = false;
   let selectedFilter = 'keseluruhan';
   let topPackages = [];
   let loading = true;
   let error = null;
-  let branchId = null;
-  let isSuperAdmin = false;
 
-  // Load data berdasarkan filter yang dipilih
+  // Load data dinamis dari Supabase untuk semua branch
   async function loadTopPackages() {
     try {
       loading = true;
       error = null;
       
-      // Check if user is super admin
-      isSuperAdmin = $userRole === 'super_admin';
-      
-      if (isSuperAdmin) {
-        // Super admin: get data from all branches
-        topPackages = await getTopPackagesForSuperAdmin(selectedFilter, 5);
-      } else {
-        // Branch admin: get data from specific branch
-        // Get branch ID jika user adalah admin branch
-        if ($user) {
-          try {
-            branchId = await getBranchIdByUser($user.id);
-          } catch (err) {
-            console.log('User bukan admin branch atau error:', err);
-            branchId = null;
-          }
-        }
-
-        topPackages = await getTopPackagesByBranch(branchId, selectedFilter, 5);
-      }
+      // Ambil data dari semua branch tanpa filter branch
+      topPackages = await getTopPackagesForSuperAdmin(selectedFilter, 5);
     } catch (err) {
       console.error('Error loading top packages:', err);
       error = err.message;
@@ -61,7 +40,7 @@
 
   // Close menu when clicking outside
   function handleClickOutside(event) {
-    if (!event.target.closest('.relative')) {
+    if (event.target && event.target.closest && !event.target.closest('.relative')) {
       isMenuOpen = false;
     }
   }
@@ -106,7 +85,7 @@
           keseluruhan
         </button>
         <button 
-          class="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50"
+          class="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50 focus-outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50"
           on:click={() => selectFilter('Umrah')}
         >
           Umrah
@@ -134,12 +113,6 @@
       <!-- Error state -->
       <div class="text-center py-6 sm:py-8">
         <p class="text-red-600 text-xs sm:text-sm">Error: {error}</p>
-        <button 
-          class="mt-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-lg text-xs sm:text-sm hover:bg-indigo-700"
-          on:click={loadTopPackages}
-        >
-          Coba Lagi
-        </button>
       </div>
     {:else if topPackages.length === 0}
       <!-- Empty state -->
@@ -174,7 +147,10 @@
               </div>
             </div>
             <div class="text-right flex-shrink-0">
-              <p class="text-slate-900 font-bold text-sm sm:text-base lg:text-lg">{pkg.totalSales}</p>
+              <p class="text-slate-900 font-bold text-sm sm:text-base lg:text-lg">
+                {pkg.totalSales}
+                <span class="text-xs font-normal text-slate-500 ml-1">Pax</span>
+              </p>
               <p class="text-slate-500 text-sm sm:text-base">sales</p>
             </div>
           </div>

@@ -1,42 +1,21 @@
 <script>
   import { onMount } from 'svelte';
-  import { getTopInquiriesByBranch, getTopInquiriesForSuperAdmin, getBranchIdByUser } from '../supabase-helpers.js';
-  import { user, userRole } from '../stores/auth.js';
+  import { getTopInquiriesForSuperAdmin } from '../supabase-helpers.js';
 
   let isMenuOpen = false;
   let selectedFilter = 'keseluruhan';
   let topInquiries = [];
   let loading = true;
   let error = null;
-  let branchId = null;
-  let isSuperAdmin = false;
 
-  // Load data berdasarkan filter yang dipilih
+  // Load data dinamis dari Supabase untuk semua branch
   async function loadTopInquiries() {
     try {
       loading = true;
       error = null;
       
-      // Check if user is super admin
-      isSuperAdmin = $userRole === 'super_admin';
-      
-      if (isSuperAdmin) {
-        // Super admin: get data from all branches
-        topInquiries = await getTopInquiriesForSuperAdmin(selectedFilter, 5);
-      } else {
-        // Branch admin: get data from specific branch
-        // Get branch ID jika user adalah admin branch
-        if ($user) {
-          try {
-            branchId = await getBranchIdByUser($user.id);
-          } catch (err) {
-            console.log('User bukan admin branch atau error:', err);
-            branchId = null;
-          }
-        }
-
-        topInquiries = await getTopInquiriesByBranch(branchId, selectedFilter, 5);
-      }
+      // Ambil data dari semua branch tanpa filter branch
+      topInquiries = await getTopInquiriesForSuperAdmin(selectedFilter, 5);
     } catch (err) {
       console.error('Error loading top inquiries:', err);
       error = err.message;
@@ -61,7 +40,7 @@
 
   // Close menu when clicking outside
   function handleClickOutside(event) {
-    if (!event.target.closest('.relative')) {
+    if (event.target && event.target.closest && !event.target.closest('.relative')) {
       isMenuOpen = false;
     }
   }
@@ -134,12 +113,6 @@
       <!-- Error state -->
       <div class="text-center py-6 sm:py-8">
         <p class="text-red-600 text-xs sm:text-sm">Error: {error}</p>
-        <button 
-          class="mt-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 text-white rounded-lg text-xs sm:text-sm hover:bg-indigo-700"
-          on:click={loadTopInquiries}
-        >
-          Coba Lagi
-        </button>
       </div>
     {:else if topInquiries.length === 0}
       <!-- Empty state -->
