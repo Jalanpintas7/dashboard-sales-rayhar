@@ -221,7 +221,7 @@
               <div class="min-w-0 flex-1 overflow-hidden">
                 <h3 class="text-slate-900 font-bold text-xs lg:text-sm truncate">{item.name}</h3>
                 <p class="text-slate-500 text-[10px] lg:text-xs truncate">
-                  {item.categoryBookings} pax {activeTab === 'umrah' ? 'umrah' : 'pelancongan'}
+                  {item.categoryBookings} Pax {activeTab === 'umrah' ? 'Umrah' : 'Pelancongan'}
                 </p>
               </div>
             </div>
@@ -327,7 +327,7 @@
           <p class="text-lg sm:text-xl font-bold text-blue-600">
             {selectedConsultant.categoryBookings}
           </p>
-          <p class="text-xs sm:text-sm text-blue-700">pax {activeTab === 'umrah' ? 'umrah' : 'pelancongan'}</p>
+          <p class="text-xs sm:text-sm text-blue-700">Pax {activeTab === 'umrah' ? 'Umrah' : 'Pelancongan'}</p>
         </div>
       </div>
 

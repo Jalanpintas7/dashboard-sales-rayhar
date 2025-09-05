@@ -609,7 +609,7 @@ export const getTopInquiriesByBranch = async (branchId, filter = 'keseluruhan', 
         conversion: `${conversionRate}%`
       };
     })
-    .sort((a, b) => parseFloat(b.conversion) - parseFloat(a.conversion))
+    .sort((a, b) => b.totalInquiries - a.totalInquiries)
     .slice(0, limit)
     .map((pkg, index) => ({
       ...pkg,
@@ -892,7 +892,7 @@ export const getTopInquiriesForSuperAdmin = async (filter = 'keseluruhan', limit
         conversion: `${conversionRate}%`
       };
     })
-    .sort((a, b) => parseFloat(b.conversion) - parseFloat(a.conversion))
+    .sort((a, b) => b.totalInquiries - a.totalInquiries)
     .slice(0, limit)
     .map((pkg, index) => ({
       ...pkg,
@@ -1035,21 +1035,23 @@ export const getTopSalesConsultantsByCategory = async (category, limit = 5) => {
     // Test 2: Get bookings filtered by category
     console.log('getTopSalesConsultantsByCategory: Getting bookings for category:', category);
 
-    // Build query based on category
+    // Build query based on category - include bilangan field for proper calculation
     let query = supabase
       .from('bookings')
-      .select('consultant_id, branch_id, created_at, total_price')
+      .select('consultant_id, branch_id, created_at, total_price, bilangan, package_types(name)')
       .not('consultant_id', 'is', null);
 
     // Add category-specific filters
     if (category === 'umrah') {
       query = query
         .not('umrah_season_id', 'is', null)
-        .not('umrah_category_id', 'is', null);
+        .not('umrah_category_id', 'is', null)
+        .eq('package_types.name', 'Umrah');
     } else if (category === 'pelancongan') {
       query = query
         .not('destination_id', 'is', null)
-        .not('outbound_date_id', 'is', null);
+        .not('outbound_date_id', 'is', null)
+        .eq('package_types.name', 'Pelancongan');
     }
 
     const { data: bookings, error: bookingsError } = await query;
@@ -1135,7 +1137,10 @@ export const getTopSalesConsultantsByCategory = async (category, limit = 5) => {
 
       consultantStats[consultantId].totalBookings += 1;
       consultantStats[consultantId].totalRevenue += parseFloat(booking.total_price || 0);
-      consultantStats[consultantId].categoryBookings += 1; // Increment category bookings
+      
+      // Calculate category bookings: 1 (main person) + bilangan (additional participants)
+      const totalPax = 1 + (booking.bilangan || 0);
+      consultantStats[consultantId].categoryBookings += totalPax;
 
       if (booking.branch_id && branchLookup[booking.branch_id]) {
         consultantStats[consultantId].branches.add(branchLookup[booking.branch_id]);
@@ -1150,9 +1155,9 @@ export const getTopSalesConsultantsByCategory = async (category, limit = 5) => {
 
     console.log('getTopSalesConsultantsByCategory: Consultant stats calculated:', Object.keys(consultantStats).length);
 
-    // Convert to array and sort by total revenue
+    // Convert to array and sort by category bookings (total participants)
     const topConsultants = Object.values(consultantStats)
-      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .sort((a, b) => b.categoryBookings - a.categoryBookings)
       .slice(0, limit)
       .map(consultant => ({
         ...consultant,
